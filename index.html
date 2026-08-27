@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3f5f2">
+  <link rel="icon" href="data:,">
+  <title>30天旅行意大利语</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f3f5f2;
+      --surface: #fbfcfa;
+      --surface-2: #e8ede8;
+      --text: #18201c;
+      --muted: #5d6962;
+      --line: #cbd4cd;
+      --accent: #176b50;
+      --accent-strong: #0f513c;
+      --accent-soft: #dcece5;
+      --danger: #9b3d38;
+      --radius: 12px;
+      --shadow: 0 14px 40px rgba(37, 59, 47, .09);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121815;
+        --surface: #19211d;
+        --surface-2: #222d27;
+        --text: #eef4ef;
+        --muted: #afbbb3;
+        --line: #35443b;
+        --accent: #64c79b;
+        --accent-strong: #86ddb5;
+        --accent-soft: #203c30;
+        --danger: #ef958d;
+        --shadow: 0 14px 40px rgba(0, 0, 0, .24);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    button { font: inherit; }
+    button:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .app { width: min(100%, 760px); margin: 0 auto; padding: 18px 16px 96px; }
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0 18px;
+    }
+    .brand { margin: 0; font-size: 1.05rem; font-weight: 760; letter-spacing: -.02em; }
+    .countdown { margin: 4px 0 0; color: var(--muted); font-size: .88rem; }
+    .day-chip {
+      flex: none;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--accent-strong);
+      background: var(--surface);
+      font-weight: 720;
+      font-size: .88rem;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      position: sticky;
+      top: 8px;
+      z-index: 3;
+    }
+    .tab {
+      min-height: 42px;
+      border: 0;
+      border-radius: calc(var(--radius) - 3px);
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .tab[aria-selected="true"] { color: var(--text); background: var(--surface); box-shadow: var(--shadow); }
+    .view { display: none; padding-top: 22px; }
+    .view.active { display: block; }
+    .lesson-head { padding: 8px 2px 22px; }
+    .lesson-label { margin: 0 0 6px; color: var(--accent-strong); font-weight: 750; font-size: .9rem; }
+    h1 { margin: 0; font-size: clamp(2rem, 9vw, 3.7rem); line-height: 1.03; letter-spacing: -.055em; }
+    .goal { max-width: 52ch; margin: 14px 0 0; color: var(--muted); font-size: 1rem; }
+    .lesson-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .btn {
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+      font-weight: 720;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn.primary { border-color: var(--accent-strong); color: #f7fff9; background: var(--accent-strong); }
+    @media (prefers-color-scheme: dark) { .btn.primary { color: #102019; background: var(--accent-strong); } }
+    .btn.small { min-height: 38px; padding: 7px 11px; font-size: .88rem; }
+    .section { margin-top: 28px; }
+    .section h2 { margin: 0 0 12px; font-size: 1.22rem; letter-spacing: -.02em; }
+    .note {
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: var(--muted);
+      background: var(--accent-soft);
+    }
+    .phrases { border-top: 1px solid var(--line); }
+    .phrase {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 18px 2px;
+      border-bottom: 1px solid var(--line);
+    }
+    .italian { margin: 0; font-size: 1.45rem; line-height: 1.2; font-weight: 780; letter-spacing: -.025em; }
+    .ipa { margin: 5px 0 0; color: var(--accent-strong); font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: .9rem; }
+    .meaning { margin: 8px 0 0; color: var(--muted); }
+    .english { display: block; color: var(--text); }
+    .read { margin-top: 5px; color: var(--muted); font-size: .88rem; }
+    .phrase-controls { display: grid; align-content: start; gap: 7px; }
+    .speak-btn, .know-btn {
+      min-width: 58px;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: .84rem;
+    }
+    .know-btn.known { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-soft); }
+    .dialogue { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .line { padding: 14px 16px; }
+    .line + .line { border-top: 1px solid var(--line); }
+    .speaker { color: var(--accent-strong); font-size: .8rem; font-weight: 780; }
+    .line-it { margin: 3px 0 0; font-weight: 720; }
+    .line-meaning { margin: 3px 0 0; color: var(--muted); font-size: .9rem; }
+    .record-box { padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .record-status { min-height: 24px; margin: 12px 0 0; color: var(--muted); font-size: .9rem; }
+    audio { width: 100%; margin-top: 12px; }
+    .practice-item { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .practice-item:first-child { border-top: 1px solid var(--line); }
+    .answer { display: none; margin: 9px 0 0; color: var(--accent-strong); font-weight: 720; }
+    .answer.show { display: block; }
+    .lesson-nav { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 8px; margin-top: 28px; }
+    .lesson-nav .btn { padding-inline: 8px; }
+    .done { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-soft); }
+    .group { margin-bottom: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .group summary { padding: 15px 16px; cursor: pointer; font-weight: 760; }
+    .lesson-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 12px 12px; }
+    .lesson-link { min-height: 52px; padding: 9px 10px; text-align: left; border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); background: var(--bg); cursor: pointer; }
+    .lesson-link.current { border-color: var(--accent); background: var(--accent-soft); }
+    .lesson-link.done::after { content: " 已完成"; color: var(--accent-strong); font-size: .75rem; }
+    .emergency-list { border-top: 1px solid var(--line); }
+    .emergency-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 15px 2px; border-bottom: 1px solid var(--line); }
+    .emergency-row .italian { font-size: 1.12rem; }
+    .empty { padding: 22px; text-align: center; color: var(--muted); border: 1px solid var(--line); border-radius: var(--radius); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+    @media (max-width: 420px) {
+      .app { padding-inline: 13px; }
+      .phrase { grid-template-columns: 1fr; }
+      .phrase-controls { grid-template-columns: 1fr 1fr; }
+      .lesson-grid { grid-template-columns: 1fr; }
+      .lesson-nav { grid-template-columns: 1fr 1fr; }
+      .lesson-nav #completeBtn { grid-column: 1 / -1; grid-row: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="brand">30天旅行意大利语</p>
+        <p class="countdown" id="countdown"></p>
+      </div>
+      <div class="day-chip" id="dayChip"></div>
+    </header>
+
+    <nav class="tabs" aria-label="主要页面">
+      <button class="tab" data-view="today" aria-selected="true">今天</button>
+      <button class="tab" data-view="all" aria-selected="false">30天</button>
+      <button class="tab" data-view="emergency" aria-selected="false">急救句</button>
+    </nav>
+
+    <section class="view active" id="todayView">
+      <div class="lesson-head">
+        <p class="lesson-label" id="lessonLabel"></p>
+        <h1 id="lessonTitle"></h1>
+        <p class="goal" id="lessonGoal"></p>
+        <div class="lesson-actions">
+          <button class="btn primary" id="playLesson">播放本课</button>
+          <button class="btn" id="speedBtn">语速：正常</button>
+        </div>
+      </div>
+
+      <section class="section">
+        <h2>今天怎么读</h2>
+        <div class="note" id="pronunciation"></div>
+      </section>
+
+      <section class="section">
+        <h2>核心句子</h2>
+        <div class="phrases" id="phrases"></div>
+      </section>
+
+      <section class="section">
+        <h2>真实对话</h2>
+        <div class="dialogue" id="dialogue"></div>
+        <div class="lesson-actions">
+          <button class="btn small" id="playDialogue">播放对话</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>录下自己</h2>
+        <div class="record-box">
+          <button class="btn" id="recordBtn">开始录音</button>
+          <button class="btn" id="stopBtn" disabled>停止</button>
+          <p class="record-status" id="recordStatus">录制本课对话，再和原声比较。</p>
+          <audio id="recording" controls hidden></audio>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>不看答案说出来</h2>
+        <div id="practice"></div>
+      </section>
+
+      <div class="lesson-nav">
+        <button class="btn" id="prevBtn">上一课</button>
+        <button class="btn" id="completeBtn">完成今天</button>
+        <button class="btn" id="nextBtn">下一课</button>
+      </div>
+    </section>
+
+    <section class="view" id="allView">
+      <div class="lesson-head">
+        <p class="lesson-label">全部内容</p>
+        <h1>只学旅行会用的</h1>
+        <p class="goal">课程会按日期自动定位，但你也可以随时复习前面的场景。</p>
+      </div>
+      <div id="lessonGroups"></div>
+    </section>
+
+    <section class="view" id="emergencyView">
+      <div class="lesson-head">
+        <p class="lesson-label">落地后直接使用</p>
+        <h1>旅行急救句</h1>
+        <p class="goal">点“播放”给对方听，也可以把意大利语文字直接展示给对方看。</p>
+      </div>
+      <div class="emergency-list" id="emergencyList"></div>
+    </section>
+  </main>
+
+  <script>
+    const p = (it, ipa, en, zh, read) => ({ it, ipa, en, zh, read });
+    const lessons = [
+      { title:"礼貌开口", goal:"进入酒店、餐厅或车站后，能打招呼并在听不懂时自救。", note:"意大利语基本按字母发音。每个词尾元音都要读出来。大写音节表示重读。", phrases:[
+        p("Buongiorno.","/bwɔnˈdʒorno/","Good morning.","您好。","bwon-JOR-no"),
+        p("Scusi.","/ˈskuzi/","Excuse me.","劳驾，不好意思。","SKOO-zee"),
+        p("Parla inglese?","/ˈparla iŋˈɡleze/","Do you speak English?","您会说英语吗？","PAR-la een-GLAY-zeh"),
+        p("Non capisco.","/non kaˈpisko/","I don't understand.","我没听懂。","non ka-PEES-ko"),
+        p("Può ripetere, per favore?","/pwɔ ripeˈtere per faˈvore/","Could you repeat, please?","请再说一遍，可以吗？","pwoh ree-peh-TEH-reh pair fa-VOH-reh")
+      ], dialogue:[["你","Buongiorno. Scusi, parla inglese?","您好。不好意思，您会说英语吗？"],["对方","Sì, un po'.","是的，会一点。"],["你","Non capisco. Può ripetere, per favore?","我没听懂。请再说一遍，可以吗？"]]},
+      { title:"数字和价格", goal:"听懂常见价格、人数、房间号，并能询问多少钱。", note:"意大利语的 t、p、k 不像英语那样强烈送气。venti 的重音在 VEN。", phrases:[
+        p("Quanto costa?","/ˈkwanto ˈkɔsta/","How much is it?","多少钱？","KWAN-to KOS-ta"),
+        p("Costa venti euro.","/ˈkɔsta ˈventi ˈɛuro/","It costs twenty euros.","20欧元。","KOS-ta VEN-tee EH-oo-ro"),
+        p("Uno, due, tre.","/ˈuno ˈdue tre/","One, two, three.","一、二、三。","OO-no DOO-eh treh"),
+        p("Due biglietti, per favore.","/ˈdue biʎˈʎetti per faˈvore/","Two tickets, please.","请给我两张票。","DOO-eh bee-LYET-tee"),
+        p("Il numero ventiquattro.","/il ˈnumero ventiˈkwattro/","Number twenty-four.","24号。","eel NOO-meh-ro ven-tee-KWAT-tro")
+      ], dialogue:[["你","Quanto costa?","多少钱？"],["售票员","Costa venti euro.","20欧元。"],["你","Due biglietti, per favore.","请给我两张票。"]]},
+      { title:"时间和日期", goal:"询问几点、什么时候出发，以及确认今天或明天。", note:"ora 的 r 要轻弹一下舌尖。alle 后面直接接时间。", phrases:[
+        p("Che ore sono?","/ke ˈore ˈsono/","What time is it?","现在几点？","keh OH-reh SO-no"),
+        p("A che ora parte?","/a ke ˈora ˈparte/","What time does it leave?","几点出发？","a keh OH-ra PAR-teh"),
+        p("Alle nove.","/alle ˈnɔve/","At nine.","九点。","AL-leh NO-veh"),
+        p("Oggi o domani?","/ˈɔddʒi o doˈmani/","Today or tomorrow?","今天还是明天？","OD-jee oh do-MA-nee"),
+        p("Il ventiquattro settembre.","/il ventiˈkwattro setˈtɛmbre/","September twenty-fourth.","9月24日。","eel ven-tee-KWAT-tro set-TEM-breh")
+      ], dialogue:[["你","A che ora parte?","几点出发？"],["对方","Alle nove.","九点。"],["你","Oggi o domani?","今天还是明天？"]]},
+      { title:"听不懂时自救", goal:"请对方放慢、写下来或指出位置。", note:"più 读作 pyoo。lentamente 的重音在 MEN。", phrases:[
+        p("Può parlare più lentamente?","/pwɔ parˈlare pju lentaˈmente/","Could you speak more slowly?","您能说慢一点吗？","pwoh par-LA-reh pyoo len-ta-MEN-teh"),
+        p("Può scriverlo?","/pwɔ ˈskriverlo/","Could you write it down?","您能写下来吗？","pwoh SKREE-ver-lo"),
+        p("Può mostrarmelo?","/pwɔ mosˈtrarmelo/","Could you show me?","您能指给我看吗？","pwoh mos-TRAR-meh-lo"),
+        p("Non parlo bene italiano.","/non ˈparlo ˈbɛne itaˈljano/","I don't speak Italian well.","我的意大利语说得不好。","non PAR-lo BEH-neh ee-ta-LYA-no"),
+        p("Ho capito, grazie.","/o kaˈpito ˈɡrattsje/","I understand, thank you.","我明白了，谢谢。","oh ka-PEE-to GRAHT-tsyeh")
+      ], dialogue:[["对方","La fermata è dopo il ponte.","车站在桥后面。"],["你","Non capisco. Può parlare più lentamente?","我没听懂。您能说慢一点吗？"],["你","Può mostrarmelo?","您能指给我看吗？"]]},
+      { title:"问路基础", goal:"询问车站、酒店、卫生间和景点在哪里。", note:"dov'è 连读成一个词，重音落在 è。", phrases:[
+        p("Dov'è la stazione?","/doˈvɛ la statˈtsjone/","Where is the station?","车站在哪里？","do-VEH la sta-TSYO-neh"),
+        p("Dov'è il bagno?","/doˈvɛ il ˈbaɲɲo/","Where is the restroom?","卫生间在哪里？","do-VEH eel BAN-nyo"),
+        p("Come arrivo al museo?","/ˈkome arˈrivo al muˈzɛo/","How do I get to the museum?","我怎么去博物馆？","KO-meh ar-REE-vo al moo-ZEH-o"),
+        p("È vicino?","/ɛ viˈtʃino/","Is it nearby?","近吗？","eh vee-CHEE-no"),
+        p("È lontano?","/ɛ lonˈtano/","Is it far?","远吗？","eh lon-TA-no")
+      ], dialogue:[["你","Scusi, dov'è la stazione?","不好意思，车站在哪里？"],["对方","È vicino.","很近。"],["你","Come arrivo alla stazione?","我怎么去车站？"]]},
+      { title:"听懂方向", goal:"听懂直走、左右转、路口和红绿灯。", note:"destra 是右边，sinistra 是左边。先听关键词，不需要听懂整句。", phrases:[
+        p("Sempre dritto.","/ˈsɛmpre ˈdritto/","Straight ahead.","一直直走。","SEM-preh DREET-to"),
+        p("A destra.","/a ˈdɛstra/","To the right.","向右。","a DES-tra"),
+        p("A sinistra.","/a siˈnistra/","To the left.","向左。","a see-NEES-tra"),
+        p("Al semaforo.","/al seˈmaforo/","At the traffic light.","在红绿灯处。","al seh-MA-fo-ro"),
+        p("Al prossimo angolo.","/al ˈprɔssimo ˈaŋɡolo/","At the next corner.","在下一个路口。","al PROS-see-mo AN-go-lo")
+      ], dialogue:[["你","Dov'è il museo?","博物馆在哪里？"],["对方","Sempre dritto, poi a destra.","一直直走，然后右转。"],["你","Al semaforo?","在红绿灯那里吗？"]]},
+      { title:"公交和地铁", goal:"确认线路、方向、车票和下车站。", note:"gli 在 biglietto 中接近英语 million 中的 lli，但舌位更靠前。", phrases:[
+        p("Quale linea devo prendere?","/ˈkwale ˈlinea ˈdɛvo ˈprɛndere/","Which line should I take?","我应该坐哪条线？","KWA-leh LEE-neh-a DEH-vo PREN-deh-reh"),
+        p("Questo autobus va in centro?","/ˈkwesto ˈautobus va in ˈtʃɛntro/","Does this bus go downtown?","这辆公交车去市中心吗？","KWES-to OW-to-boos va een CHEN-tro"),
+        p("Un biglietto, per favore.","/un biʎˈʎetto per faˈvore/","One ticket, please.","请给我一张票。","oon bee-LYET-to"),
+        p("Dove devo scendere?","/ˈdove ˈdɛvo ˈʃɛndere/","Where should I get off?","我应该在哪里下车？","DO-veh DEH-vo SHEN-deh-reh"),
+        p("Mi avvisa, per favore?","/mi avˈviza per faˈvore/","Could you let me know?","到站请提醒我。","mee av-VEE-za")
+      ], dialogue:[["你","Questo autobus va in centro?","这辆公交车去市中心吗？"],["司机","Sì.","是的。"],["你","Dove devo scendere? Mi avvisa, per favore?","我应该在哪里下车？到站请提醒我。"]]},
+      { title:"购买火车票", goal:"购买指定日期、时间和目的地的单程或往返票。", note:"andata 是去程，ritorno 是回程。直接把目的地放在 per 后面。", phrases:[
+        p("Vorrei un biglietto per Firenze.","/vorˈrɛi un biʎˈʎetto per fiˈrɛntse/","I'd like a ticket to Florence.","我想买一张去佛罗伦萨的票。","vor-RAY oon bee-LYET-to pair fee-REN-tseh"),
+        p("Solo andata.","/ˈsolo anˈdata/","One way.","单程。","SO-lo an-DA-ta"),
+        p("Andata e ritorno.","/anˈdata e riˈtorno/","Round trip.","往返。","an-DA-ta eh ree-TOR-no"),
+        p("Per domani mattina.","/per doˈmani matˈtina/","For tomorrow morning.","明天上午的。","pair do-MA-nee mat-TEE-na"),
+        p("Due adulti.","/ˈdue aˈdulti/","Two adults.","两位成人。","DOO-eh a-DOOL-tee")
+      ], dialogue:[["你","Vorrei due biglietti per Firenze.","我想买两张去佛罗伦萨的票。"],["售票员","Solo andata?","单程吗？"],["你","Andata e ritorno, per favore.","请给我往返票。"]]},
+      { title:"火车站确认", goal:"找到站台、确认列车是否准点，并处理坐错车。", note:"binario 是站台编号。意大利车站广播里常会听到 ritardo，表示晚点。", phrases:[
+        p("Da quale binario parte?","/da ˈkwale biˈnario ˈparte/","Which platform does it leave from?","从哪个站台出发？","da KWA-leh bee-NA-ryo PAR-teh"),
+        p("Il treno è in orario?","/il ˈtrɛno ɛ in oˈrario/","Is the train on time?","火车准点吗？","eel TREH-no eh een o-RA-ryo"),
+        p("Quanto ritardo c'è?","/ˈkwanto riˈtardo tʃɛ/","How long is the delay?","晚点多久？","KWAN-to ree-TAR-do cheh"),
+        p("Questo è il treno per Roma?","/ˈkwesto ɛ il ˈtrɛno per ˈroma/","Is this the train to Rome?","这是去罗马的火车吗？","KWES-to eh eel TREH-no pair RO-ma"),
+        p("Ho preso il treno sbagliato.","/o ˈprezo il ˈtrɛno zbaʎˈʎato/","I took the wrong train.","我坐错火车了。","oh PREH-zo eel TREH-no zba-LYA-to")
+      ], dialogue:[["你","Scusi, da quale binario parte il treno per Roma?","去罗马的火车从哪个站台出发？"],["工作人员","Dal binario cinque.","从5号站台。"],["你","Il treno è in orario?","火车准点吗？"]]},
+      { title:"酒店入住", goal:"向前台报预订姓名、出示证件并领取房间。", note:"ho 只读 /o/，h 不发音。nome 的重音在 NO。", phrases:[
+        p("Ho una prenotazione.","/o ˈuna prenotatˈtsjone/","I have a reservation.","我有预订。","oh OO-na preh-no-ta-TSYO-neh"),
+        p("A nome di Li.","/a ˈnome di/","Under the name Li.","预订姓氏是李。","a NO-meh dee Lee"),
+        p("Ecco il mio passaporto.","/ˈɛkko il mio passaˈpɔrto/","Here is my passport.","这是我的护照。","EK-ko eel MEE-o pas-sa-POR-to"),
+        p("La camera è pronta?","/la ˈkamera ɛ ˈpronta/","Is the room ready?","房间准备好了吗？","la KA-meh-ra eh PRON-ta"),
+        p("Qual è il numero della camera?","/kwal ɛ il ˈnumero ˈdella ˈkamera/","What is the room number?","房间号是多少？","kwal eh eel NOO-meh-ro DEL-la KA-meh-ra")
+      ], dialogue:[["你","Buonasera. Ho una prenotazione a nome di Li.","晚上好。我用李这个姓氏预订了房间。"],["前台","Il passaporto, per favore.","请出示护照。"],["你","Ecco il mio passaporto.","这是我的护照。"]]},
+      { title:"确认酒店设施", goal:"询问早餐、Wi-Fi、电梯和退房时间。", note:"c'è 连读为 /tʃɛ/，表示“有吗”。", phrases:[
+        p("La colazione è inclusa?","/la kolatˈtsjone ɛ inˈkluza/","Is breakfast included?","包含早餐吗？","la ko-la-TSYO-neh eh een-KLOO-za"),
+        p("A che ora è la colazione?","/a ke ˈora ɛ la kolatˈtsjone/","What time is breakfast?","早餐几点？","a keh OH-ra eh la ko-la-TSYO-neh"),
+        p("C'è il Wi-Fi?","/tʃɛ il ˈwaifai/","Is there Wi-Fi?","有Wi-Fi吗？","cheh eel WHY-fy"),
+        p("Dov'è l'ascensore?","/doˈvɛ laʃʃenˈsore/","Where is the elevator?","电梯在哪里？","do-VEH la-shen-SO-reh"),
+        p("A che ora è il check-out?","/a ke ˈora ɛ il tʃek aut/","What time is check-out?","几点退房？","a keh OH-ra eh eel check-out")
+      ], dialogue:[["你","La colazione è inclusa?","包含早餐吗？"],["前台","Sì, dalle sette.","是的，从7点开始。"],["你","Dov'è l'ascensore?","电梯在哪里？"]]},
+      { title:"酒店问题", goal:"报告没有热水、空调故障、房间太吵等问题。", note:"non funziona 是“不能用”。把物品名称放在前面即可。", phrases:[
+        p("Non c'è acqua calda.","/non tʃɛ ˈakkwa ˈkalda/","There is no hot water.","没有热水。","non cheh AK-kwa KAL-da"),
+        p("L'aria condizionata non funziona.","/ˈlarja konditˈtsjonata non funˈtsjona/","The air conditioning doesn't work.","空调坏了。","LAR-ya kon-dee-tsyo-NA-ta non foon-TSYO-na"),
+        p("La camera è troppo rumorosa.","/la ˈkamera ɛ ˈtrɔppo rumoˈroza/","The room is too noisy.","房间太吵了。","la KA-meh-ra eh TROP-po roo-mo-RO-za"),
+        p("Può mandare qualcuno?","/pwɔ manˈdare kwalˈkuno/","Can you send someone?","可以派人来看一下吗？","pwoh man-DA-reh kwal-KOO-no"),
+        p("Posso cambiare camera?","/ˈpɔsso kamˈbjare ˈkamera/","Can I change rooms?","可以换房间吗？","POS-so kam-BYA-reh KA-meh-ra")
+      ], dialogue:[["你","Scusi, non c'è acqua calda.","不好意思，没有热水。"],["前台","Mi dispiace.","很抱歉。"],["你","Può mandare qualcuno?","可以派人来看一下吗？"]]},
+      { title:"退房和寄存", goal:"办理退房、寄存行李并索要收据。", note:"bagagli 的 gli 近似连在一起的 ly。ricevuta 的重音在 VU。", phrases:[
+        p("Vorrei fare il check-out.","/vorˈrɛi ˈfare il tʃek aut/","I'd like to check out.","我想退房。","vor-RAY FA-reh eel check-out"),
+        p("Posso lasciare i bagagli?","/ˈpɔsso laʃˈʃare i baˈɡaʎʎi/","Can I leave my luggage here?","我可以寄存行李吗？","POS-so la-SHA-reh ee ba-GA-lyee"),
+        p("Fino alle cinque.","/ˈfino ˈalle ˈtʃinkwe/","Until five o'clock.","寄存到5点。","FEE-no AL-leh CHEEN-kweh"),
+        p("Posso avere una ricevuta?","/ˈpɔsso aˈvere ˈuna ritʃeˈvuta/","Can I have a receipt?","可以给我收据吗？","POS-so a-VEH-reh OO-na ree-cheh-VOO-ta"),
+        p("È tutto a posto?","/ɛ ˈtutto a ˈpɔsto/","Is everything settled?","都结清了吗？","eh TOOT-to a POS-to")
+      ], dialogue:[["你","Vorrei fare il check-out.","我想退房。"],["你","Posso lasciare i bagagli fino alle cinque?","行李可以寄存到5点吗？"],["前台","Certo.","当然。"]]},
+      { title:"咖啡馆", goal:"在意大利咖啡馆点咖啡、牛角包和水。", note:"vorrei 是最安全的“我想要”。在任何点单场景都可以使用。", phrases:[
+        p("Vorrei un caffè.","/vorˈrɛi un kafˈfɛ/","I'd like a coffee.","我想要一杯意式浓缩。","vor-RAY oon kaf-FEH"),
+        p("Un cappuccino, per favore.","/un kapputˈtʃino per faˈvore/","A cappuccino, please.","请给我一杯卡布奇诺。","oon kap-poo-CHEE-no"),
+        p("Un cornetto.","/un korˈnetto/","A croissant.","一个意式牛角包。","oon kor-NET-to"),
+        p("Una bottiglia d'acqua naturale.","/ˈuna botˈtiʎʎa ˈdakkwa natuˈrale/","A bottle of still water.","一瓶不含气的水。","OO-na bot-TEE-lya DAK-kwa na-too-RA-leh"),
+        p("Da portare via.","/da porˈtare ˈvia/","To take away.","打包带走。","da por-TA-reh VEE-a")
+      ], dialogue:[["店员","Buongiorno, dica.","您好，请说。"],["你","Un cappuccino e un cornetto, per favore.","请给我一杯卡布奇诺和一个牛角包。"],["店员","Qui o da portare via?","这里吃还是带走？"]]},
+      { title:"餐厅入座", goal:"说明人数、是否预订，并询问室内或室外座位。", note:"siamo in due 是餐厅里表达“两位”的自然说法。", phrases:[
+        p("Siamo in due.","/ˈsjamo in ˈdue/","There are two of us.","我们两位。","SYA-mo een DOO-eh"),
+        p("Abbiamo una prenotazione.","/abˈbjamo ˈuna prenotatˈtsjone/","We have a reservation.","我们有预订。","ab-BYA-mo OO-na preh-no-ta-TSYO-neh"),
+        p("Non abbiamo prenotato.","/non abˈbjamo prenoˈtato/","We don't have a reservation.","我们没有预订。","non ab-BYA-mo preh-no-TA-to"),
+        p("C'è un tavolo libero?","/tʃɛ un ˈtavolo ˈlibero/","Is there a free table?","有空桌吗？","cheh oon TA-vo-lo LEE-beh-ro"),
+        p("Possiamo sederci fuori?","/posˈsjamo seˈdertʃi ˈfwɔri/","Can we sit outside?","我们可以坐室外吗？","pos-SYA-mo seh-DER-chee FWO-ree")
+      ], dialogue:[["服务员","Avete prenotato?","你们预订了吗？"],["你","Non abbiamo prenotato. Siamo in due.","没有。我们两位。"],["你","C'è un tavolo libero fuori?","室外有空桌吗？"]]},
+      { title:"看懂菜单", goal:"索要菜单，询问招牌菜和菜品内容。", note:"consiglia 的 gli 读 ly。che cosa 表示“什么”。", phrases:[
+        p("Il menù, per favore.","/il meˈnu per faˈvore/","The menu, please.","请给我菜单。","eel meh-NOO"),
+        p("Che cosa ci consiglia?","/ke ˈkɔza tʃi konˈsiʎʎa/","What do you recommend?","您推荐什么？","keh KO-za chee kon-SEE-lya"),
+        p("Qual è il piatto tipico?","/kwal ɛ il ˈpjatto ˈtipiko/","What is the local specialty?","当地特色菜是什么？","kwal eh eel PYAT-to TEE-pee-ko"),
+        p("Che cosa contiene?","/ke ˈkɔza konˈtjɛne/","What does it contain?","里面有什么？","keh KO-za kon-TYEH-neh"),
+        p("Questo è piccante?","/ˈkwesto ɛ pikˈkante/","Is this spicy?","这个辣吗？","KWES-to eh peek-KAN-teh")
+      ], dialogue:[["你","Il menù, per favore.","请给我菜单。"],["你","Che cosa ci consiglia?","您推荐什么？"],["服务员","La pasta della casa.","本店特色意面。"]]},
+      { title:"正式点餐", goal:"点前菜、主菜、饮料，并确认分量。", note:"prendo 字面是“我拿”，在餐厅里自然表示“我要这个”。", phrases:[
+        p("Per me, questo.","/per me ˈkwesto/","This for me.","我要这个。","pair meh KWES-to"),
+        p("Prendo la pasta.","/ˈprɛndo la ˈpasta/","I'll have the pasta.","我要意面。","PREN-do la PAS-ta"),
+        p("Da bere, acqua naturale.","/da ˈbere ˈakkwa natuˈrale/","Still water to drink.","饮料要不含气的水。","da BEH-reh AK-kwa na-too-RA-leh"),
+        p("Possiamo dividerlo?","/posˈsjamo diˈviderlo/","Can we share it?","我们可以分着吃吗？","pos-SYA-mo dee-VEE-der-lo"),
+        p("Basta così, grazie.","/ˈbasta koˈzi ˈɡrattsje/","That's all, thank you.","这些就够了，谢谢。","BAS-ta ko-ZEE GRAHT-tsyeh")
+      ], dialogue:[["服务员","Avete scelto?","选好了吗？"],["你","Sì. Prendo la pasta.","是的，我要意面。"],["你","Da bere, acqua naturale. Basta così, grazie.","饮料要不含气的水。就这些，谢谢。"]]},
+      { title:"过敏和忌口", goal:"表达过敏、素食、不吃某种食材。", note:"senza 表示“不含”。有严重过敏时，同时给服务员看文字。", phrases:[
+        p("Sono allergico alle noci.","/ˈsono alˈlɛrdʒiko ˈalle ˈnɔtʃi/","I am allergic to nuts.","我对坚果过敏。","SO-no al-LER-jee-ko AL-leh NO-chee"),
+        p("Sono allergica alle noci.","/ˈsono alˈlɛrdʒika ˈalle ˈnɔtʃi/","I am allergic to nuts.","女性说：我对坚果过敏。","SO-no al-LER-jee-ka AL-leh NO-chee"),
+        p("Senza formaggio, per favore.","/ˈsɛntsa forˈmaddʒo per faˈvore/","Without cheese, please.","请不要放奶酪。","SEN-tsa for-MAD-jo"),
+        p("Sono vegetariano.","/ˈsono vedʒetaˈrjano/","I am vegetarian.","男性说：我是素食者。","SO-no veh-jeh-ta-RYA-no"),
+        p("Contiene latte?","/konˈtjɛne ˈlatte/","Does it contain milk?","含牛奶吗？","kon-TYEH-neh LAT-teh")
+      ], dialogue:[["你","Scusi, contiene noci?","不好意思，含坚果吗？"],["服务员","Sì.","含有。"],["你","Sono allergica alle noci. Qualcos'altro, per favore.","我对坚果过敏。请换别的。"]]},
+      { title:"结账", goal:"索要账单，询问刷卡、分开付款和服务费。", note:"conto 是账单。carta 是银行卡。", phrases:[
+        p("Il conto, per favore.","/il ˈkonto per faˈvore/","The bill, please.","请结账。","eel KON-to"),
+        p("Posso pagare con la carta?","/ˈpɔsso paˈɡare kon la ˈkarta/","Can I pay by card?","可以刷卡吗？","POS-so pa-GA-reh kon la KAR-ta"),
+        p("Possiamo pagare separatamente?","/posˈsjamo paˈɡare separataˈmente/","Can we pay separately?","可以分开付款吗？","pos-SYA-mo pa-GA-reh seh-pa-ra-ta-MEN-teh"),
+        p("Il servizio è incluso?","/il serˈvittsjo ɛ inˈkluzo/","Is service included?","包含服务费吗？","eel ser-VEET-tsyo eh een-KLOO-zo"),
+        p("Posso avere la ricevuta?","/ˈpɔsso aˈvere la ritʃeˈvuta/","Can I have the receipt?","可以给我收据吗？","POS-so a-VEH-reh la ree-cheh-VOO-ta")
+      ], dialogue:[["你","Il conto, per favore.","请结账。"],["你","Posso pagare con la carta?","可以刷卡吗？"],["你","Posso avere la ricevuta?","可以给我收据吗？"]]},
+      { title:"购物", goal:"询价、寻找尺寸颜色并决定购买。", note:"questo 是“这个”，quello 是“那个”。试穿用 provare。", phrases:[
+        p("Quanto costa questo?","/ˈkwanto ˈkɔsta ˈkwesto/","How much is this?","这个多少钱？","KWAN-to KOS-ta KWES-to"),
+        p("Posso provarlo?","/ˈpɔsso proˈvarlo/","Can I try it on?","我可以试穿吗？","POS-so pro-VAR-lo"),
+        p("Avete una taglia più grande?","/aˈvete ˈuna ˈtaʎʎa pju ˈɡrande/","Do you have a larger size?","有大一码的吗？","a-VEH-teh OO-na TA-lya pyoo GRAN-deh"),
+        p("Avete un altro colore?","/aˈvete un ˈaltro koˈlore/","Do you have another color?","有其他颜色吗？","a-VEH-teh oon AL-tro ko-LO-reh"),
+        p("Lo prendo.","/lo ˈprɛndo/","I'll take it.","我要了。","lo PREN-do")
+      ], dialogue:[["你","Quanto costa questo?","这个多少钱？"],["店员","Quaranta euro.","40欧元。"],["你","Posso provarlo?","我可以试穿吗？"]]},
+      { title:"景点门票", goal:"购买门票，确认时间、入口和是否需要预约。", note:"biglietteria 是售票处。prenotare 是预订。", phrases:[
+        p("Due biglietti, per favore.","/ˈdue biʎˈʎetti per faˈvore/","Two tickets, please.","请给我两张票。","DOO-eh bee-LYET-tee"),
+        p("Serve la prenotazione?","/ˈsɛrve la prenotatˈtsjone/","Is a reservation required?","需要预约吗？","SER-veh la preh-no-ta-TSYO-neh"),
+        p("Qual è il primo orario disponibile?","/kwal ɛ il ˈprimo oˈrario disponiˈbile/","What is the earliest available time?","最早可选几点？","kwal eh eel PREE-mo o-RA-ryo dee-spo-NEE-bee-leh"),
+        p("Dov'è l'ingresso?","/doˈvɛ linˈɡrɛsso/","Where is the entrance?","入口在哪里？","do-VEH leen-GRES-so"),
+        p("A che ora chiude?","/a ke ˈora ˈkjude/","What time does it close?","几点关门？","a keh OH-ra KYOO-deh")
+      ], dialogue:[["你","Due biglietti, per favore.","请给我两张票。"],["你","Serve la prenotazione?","需要预约吗？"],["你","Dov'è l'ingresso?","入口在哪里？"]]},
+      { title:"拍照和参观", goal:"请别人帮忙拍照，询问能否拍照和参观时长。", note:"foto 的第一个 o 重读。può 常用来提出礼貌请求。", phrases:[
+        p("Può farci una foto?","/pwɔ ˈfartʃi ˈuna ˈfɔto/","Could you take a photo of us?","能帮我们拍张照片吗？","pwoh FAR-chee OO-na FO-to"),
+        p("Si possono fare foto?","/si ˈpɔssono ˈfare ˈfɔto/","Are photos allowed?","可以拍照吗？","see POS-so-no FA-reh FO-to"),
+        p("Senza flash?","/ˈsɛntsa flɛʃ/","Without flash?","不能用闪光灯吗？","SEN-tsa flash"),
+        p("Quanto dura la visita?","/ˈkwanto ˈdura la ˈvizita/","How long does the visit take?","参观需要多久？","KWAN-to DOO-ra la VEE-zee-ta"),
+        p("C'è una visita guidata?","/tʃɛ ˈuna ˈvizita ɡwiˈdata/","Is there a guided tour?","有导览吗？","cheh OO-na VEE-zee-ta gwee-DA-ta")
+      ], dialogue:[["你","Scusi, può farci una foto?","不好意思，能帮我们拍张照片吗？"],["对方","Certo.","当然。"],["你","Grazie mille.","非常感谢。"]]},
+      { title:"卫生间和药店", goal:"寻找卫生间、药店并描述常见不适。", note:"farmacia 的 cia 读 cha。male 表示疼或不舒服。", phrases:[
+        p("Dov'è il bagno?","/doˈvɛ il ˈbaɲɲo/","Where is the restroom?","卫生间在哪里？","do-VEH eel BAN-nyo"),
+        p("Dov'è la farmacia più vicina?","/doˈvɛ la farmaˈtʃia pju viˈtʃina/","Where is the nearest pharmacy?","最近的药店在哪里？","do-VEH la far-ma-CHEE-a pyoo vee-CHEE-na"),
+        p("Ho mal di testa.","/o mal di ˈtɛsta/","I have a headache.","我头疼。","oh mal dee TES-ta"),
+        p("Ho mal di stomaco.","/o mal di ˈstɔmako/","I have a stomachache.","我胃疼。","oh mal dee STO-ma-ko"),
+        p("Mi serve un medico.","/mi ˈsɛrve un ˈmɛdiko/","I need a doctor.","我需要医生。","mee SER-veh oon MEH-dee-ko")
+      ], dialogue:[["你","Scusi, dov'è la farmacia più vicina?","不好意思，最近的药店在哪里？"],["药剂师","Come posso aiutarla?","我能怎么帮助您？"],["你","Ho mal di stomaco.","我胃疼。"]]},
+      { title:"紧急求助", goal:"遇到危险、遗失物品或需要警察时能立即求助。", note:"紧急时先说 Aiuto，再说具体需要什么。", phrases:[
+        p("Aiuto!","/aˈjuto/","Help!","救命，帮忙！","a-YOO-to"),
+        p("Chiami la polizia!","/ˈkjami la politˈtsia/","Call the police!","请报警！","KYA-mee la po-lee-TSYA"),
+        p("Ho perso il passaporto.","/o ˈpɛrso il passaˈpɔrto/","I lost my passport.","我的护照丢了。","oh PER-so eel pas-sa-POR-to"),
+        p("Mi hanno rubato il telefono.","/mi ˈanno ruˈbato il teˈlɛfono/","My phone was stolen.","我的手机被偷了。","mee AN-no roo-BA-to eel teh-LEH-fo-no"),
+        p("Dov'è il pronto soccorso?","/doˈvɛ il ˈpronto sokˈkorso/","Where is the emergency room?","急诊室在哪里？","do-VEH eel PRON-to sok-KOR-so")
+      ], dialogue:[["你","Aiuto! Mi hanno rubato il telefono.","帮忙！我的手机被偷了。"],["对方","Chiamo la polizia.","我来报警。"],["你","Grazie.","谢谢。"]]},
+      { title:"机场到酒店", goal:"把机场、车票、方向和酒店入住连成一次完整练习。", note:"今天不学新规则。先确保每个关键任务都能说出第一句话。", phrases:[
+        p("Dov'è la stazione?","/doˈvɛ la statˈtsjone/","Where is the station?","车站在哪里？","do-VEH la sta-TSYO-neh"),
+        p("Due biglietti per il centro.","/ˈdue biʎˈʎetti per il ˈtʃɛntro/","Two tickets downtown.","两张去市中心的票。","DOO-eh bee-LYET-tee pair eel CHEN-tro"),
+        p("Questo treno va in centro?","/ˈkwesto ˈtrɛno va in ˈtʃɛntro/","Does this train go downtown?","这列火车去市中心吗？","KWES-to TREH-no va een CHEN-tro"),
+        p("Ho una prenotazione a nome di Li.","/o ˈuna prenotatˈtsjone a ˈnome di/","I have a reservation under Li.","我用李这个姓氏预订了房间。","oh OO-na preh-no-ta-TSYO-neh a NO-meh dee"),
+        p("A che ora è il check-out?","/a ke ˈora ɛ il tʃek aut/","What time is check-out?","几点退房？","a keh OH-ra eh eel check-out")
+      ], dialogue:[["你","Scusi, dov'è la stazione?","不好意思，车站在哪里？"],["你","Due biglietti per il centro, per favore.","请给我两张去市中心的票。"],["你","Buonasera. Ho una prenotazione a nome di Li.","晚上好。我用李这个姓氏预订了房间。"]]},
+      { title:"酒店完整模拟", goal:"从进门到处理房间问题，连续完成一次酒店对话。", note:"今天重点是连续说，不要因为一个音不完美就停下来。", phrases:[
+        p("Buonasera. Ho una prenotazione.","/bwɔnaˈsera o ˈuna prenotatˈtsjone/","Good evening. I have a reservation.","晚上好。我有预订。","bwoh-na-SEH-ra oh OO-na preh-no-ta-TSYO-neh"),
+        p("La colazione è inclusa?","/la kolatˈtsjone ɛ inˈkluza/","Is breakfast included?","包含早餐吗？","la ko-la-TSYO-neh eh een-KLOO-za"),
+        p("C'è il Wi-Fi in camera?","/tʃɛ il ˈwaifai in ˈkamera/","Is there Wi-Fi in the room?","房间里有Wi-Fi吗？","cheh eel WHY-fy een KA-meh-ra"),
+        p("Non c'è acqua calda.","/non tʃɛ ˈakkwa ˈkalda/","There is no hot water.","没有热水。","non cheh AK-kwa KAL-da"),
+        p("Posso lasciare i bagagli?","/ˈpɔsso laʃˈʃare i baˈɡaʎʎi/","Can I leave my luggage here?","我可以寄存行李吗？","POS-so la-SHA-reh ee ba-GA-lyee")
+      ], dialogue:[["你","Buonasera. Ho una prenotazione a nome di Li.","晚上好。我用李这个姓氏预订了房间。"],["前台","Ecco la chiave.","这是房卡。"],["你","Grazie. La colazione è inclusa?","谢谢。包含早餐吗？"],["你","Scusi, non c'è acqua calda.","不好意思，没有热水。"]]},
+      { title:"餐厅完整模拟", goal:"从入座到结账，连续完成一次用餐。", note:"今天把菜单当成指示工具。忘记菜名时，可以指着说 questo。", phrases:[
+        p("Siamo in due.","/ˈsjamo in ˈdue/","There are two of us.","我们两位。","SYA-mo een DOO-eh"),
+        p("Che cosa ci consiglia?","/ke ˈkɔza tʃi konˈsiʎʎa/","What do you recommend?","您推荐什么？","keh KO-za chee kon-SEE-lya"),
+        p("Per me, questo.","/per me ˈkwesto/","This for me.","我要这个。","pair meh KWES-to"),
+        p("Senza formaggio, per favore.","/ˈsɛntsa forˈmaddʒo per faˈvore/","Without cheese, please.","请不要奶酪。","SEN-tsa for-MAD-jo"),
+        p("Il conto, per favore.","/il ˈkonto per faˈvore/","The bill, please.","请结账。","eel KON-to")
+      ], dialogue:[["你","Buonasera. Siamo in due.","晚上好。我们两位。"],["你","Che cosa ci consiglia?","您推荐什么？"],["你","Per me, questo. Senza formaggio, per favore.","我要这个。请不要奶酪。"],["你","Il conto, per favore.","请结账。"]]},
+      { title:"城市一日模拟", goal:"完成问路、买票、参观、购物和返回酒店。", note:"今天只关注任务是否完成。对方回复太长时，立即使用慢一点和指给我看。", phrases:[
+        p("Come arrivo al museo?","/ˈkome arˈrivo al muˈzɛo/","How do I get to the museum?","我怎么去博物馆？","KO-meh ar-REE-vo al moo-ZEH-o"),
+        p("Due biglietti, per favore.","/ˈdue biʎˈʎetti per faˈvore/","Two tickets, please.","请给我两张票。","DOO-eh bee-LYET-tee"),
+        p("Si possono fare foto?","/si ˈpɔssono ˈfare ˈfɔto/","Are photos allowed?","可以拍照吗？","see POS-so-no FA-reh FO-to"),
+        p("Quanto costa questo?","/ˈkwanto ˈkɔsta ˈkwesto/","How much is this?","这个多少钱？","KWAN-to KOS-ta KWES-to"),
+        p("Può mostrarmelo?","/pwɔ mosˈtrarmelo/","Could you show me?","您能指给我看吗？","pwoh mos-TRAR-meh-lo")
+      ], dialogue:[["你","Scusi, come arrivo al museo?","不好意思，我怎么去博物馆？"],["你","Due biglietti, per favore.","请给我两张票。"],["你","Si possono fare foto?","可以拍照吗？"],["你","Quanto costa questo?","这个多少钱？"]]},
+      { title:"出发前总复习", goal:"把最重要的句子放进短期记忆，准备第二天落地使用。", note:"今天不要学新词。每个场景只记第一句和一条自救句。", phrases:[
+        p("Scusi, parla inglese?","/ˈskuzi ˈparla iŋˈɡleze/","Excuse me, do you speak English?","不好意思，您会说英语吗？","SKOO-zee PAR-la een-GLAY-zeh"),
+        p("Può parlare più lentamente?","/pwɔ parˈlare pju lentaˈmente/","Could you speak more slowly?","您能说慢一点吗？","pwoh par-LA-reh pyoo len-ta-MEN-teh"),
+        p("Dov'è la stazione?","/doˈvɛ la statˈtsjone/","Where is the station?","车站在哪里？","do-VEH la sta-TSYO-neh"),
+        p("Ho una prenotazione.","/o ˈuna prenotatˈtsjone/","I have a reservation.","我有预订。","oh OO-na preh-no-ta-TSYO-neh"),
+        p("Il conto, per favore.","/il ˈkonto per faˈvore/","The bill, please.","请结账。","eel KON-to")
+      ], dialogue:[["你","Scusi, parla inglese?","不好意思，您会说英语吗？"],["你","Può parlare più lentamente?","您能说慢一点吗？"],["你","Grazie mille.","非常感谢。"]]},
+      { title:"落地当天", goal:"不追求完整句法，只要安全、礼貌、顺利完成每个旅行任务。", note:"先说 Buongiorno 或 Scusi，再说核心需求。听不懂就展示手机上的句子。", phrases:[
+        p("Buongiorno.","/bwɔnˈdʒorno/","Good morning.","您好。","bwon-JOR-no"),
+        p("Non capisco.","/non kaˈpisko/","I don't understand.","我没听懂。","non ka-PEES-ko"),
+        p("Può mostrarmelo?","/pwɔ mosˈtrarmelo/","Could you show me?","您能指给我看吗？","pwoh mos-TRAR-meh-lo"),
+        p("Ho bisogno di aiuto.","/o biˈzoɲɲo di aˈjuto/","I need help.","我需要帮助。","oh bee-ZON-nyo dee a-YOO-to"),
+        p("Grazie mille.","/ˈɡrattsje ˈmille/","Thank you very much.","非常感谢。","GRAHT-tsyeh MEEL-leh")
+      ], dialogue:[["你","Buongiorno. Scusi, parla inglese?","您好。不好意思，您会说英语吗？"],["你","Non capisco. Può mostrarmelo?","我没听懂。您能指给我看吗？"],["你","Grazie mille.","非常感谢。"]]}
+    ];
+
+    const emergency = [
+      p("Parla inglese?","/ˈparla iŋˈɡleze/","Do you speak English?","您会说英语吗？",""),
+      p("Non capisco.","/non kaˈpisko/","I don't understand.","我没听懂。",""),
+      p("Può parlare più lentamente?","/pwɔ parˈlare pju lentaˈmente/","Could you speak more slowly?","您能说慢一点吗？",""),
+      p("Può scriverlo?","/pwɔ ˈskriverlo/","Could you write it down?","您能写下来吗？",""),
+      p("Può mostrarmelo?","/pwɔ mosˈtrarmelo/","Could you show me?","您能指给我看吗？",""),
+      p("Dov'è il bagno?","/doˈvɛ il ˈbaɲɲo/","Where is the restroom?","卫生间在哪里？",""),
+      p("Dov'è la stazione?","/doˈvɛ la statˈtsjone/","Where is the station?","车站在哪里？",""),
+      p("Ho una prenotazione.","/o ˈuna prenotatˈtsjone/","I have a reservation.","我有预订。",""),
+      p("Il conto, per favore.","/il ˈkonto per faˈvore/","The bill, please.","请结账。",""),
+      p("Quanto costa?","/ˈkwanto ˈkɔsta/","How much is it?","多少钱？",""),
+      p("Aiuto!","/aˈjuto/","Help!","帮忙！",""),
+      p("Mi serve un medico.","/mi ˈsɛrve un ˈmɛdiko/","I need a doctor.","我需要医生。",""),
+      p("Ho perso il passaporto.","/o ˈpɛrso il passaˈpɔrto/","I lost my passport.","我的护照丢了。",""),
+      p("Mi hanno rubato il telefono.","/mi ˈanno ruˈbato il teˈlɛfono/","My phone was stolen.","我的手机被偷了。","")
+    ];
+
+    const groups = [
+      ["生存基础",0,3], ["问路和交通",4,8], ["酒店",9,12], ["咖啡和餐厅",13,18],
+      ["购物和景点",19,21], ["健康和求助",22,24], ["全流程模拟",25,29]
+    ];
+    const startDate = new Date("2026-08-26T00:00:00+08:00");
+    const travelDate = new Date("2026-09-24T00:00:00+08:00");
+    const dateNow = new Date();
+    const dayMs = 86400000;
+    const calendarDay = Math.min(29, Math.max(0, Math.floor((dateNow - startDate) / dayMs)));
+    let currentDay = calendarDay;
+    let rate = 0.9;
+    let mediaRecorder;
+    let mediaStream;
+    let chunks = [];
+    const progress = JSON.parse(localStorage.getItem("italian30-progress") || "{}");
+
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+
+    function speak(text, selectedRate = rate) {
+      if (!("speechSynthesis" in window)) {
+        alert("当前浏览器不支持文字朗读。请换用手机系统浏览器或 Chrome。" );
+        return;
+      }
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "it-IT";
+      utterance.rate = selectedRate;
+      const voices = speechSynthesis.getVoices();
+      utterance.voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("it")) || null;
+      speechSynthesis.speak(utterance);
+    }
+
+    function saveProgress() {
+      localStorage.setItem("italian30-progress", JSON.stringify(progress));
+    }
+
+    function renderLesson() {
+      const lesson = lessons[currentDay];
+      $("dayChip").textContent = `第 ${currentDay + 1} 天`;
+      $("lessonLabel").textContent = `第 ${currentDay + 1} 课`;
+      $("lessonTitle").textContent = lesson.title;
+      $("lessonGoal").textContent = lesson.goal;
+      $("pronunciation").textContent = lesson.note;
+      $("phrases").innerHTML = lesson.phrases.map((item, index) => {
+        const key = `${currentDay}-${index}`;
+        const known = progress.phrases?.[key];
+        return `<article class="phrase">
+          <div>
+            <p class="italian" lang="it">${escapeHtml(item.it)}</p>
+            <p class="ipa">${escapeHtml(item.ipa)}</p>
+            <p class="meaning"><span class="english">${escapeHtml(item.en)}</span>${escapeHtml(item.zh)}</p>
+            <p class="read">英语发音提示：${escapeHtml(item.read)}</p>
+          </div>
+          <div class="phrase-controls">
+            <button class="speak-btn" data-speak="${escapeHtml(item.it)}">播放</button>
+            <button class="know-btn ${known ? "known" : ""}" data-know="${key}">${known ? "已会" : "标记"}</button>
+          </div>
+        </article>`;
+      }).join("");
+      $("dialogue").innerHTML = lesson.dialogue.map(line => `<div class="line">
+        <div class="speaker">${escapeHtml(line[0])}</div>
+        <p class="line-it" lang="it">${escapeHtml(line[1])}</p>
+        <p class="line-meaning">${escapeHtml(line[2])}</p>
+      </div>`).join("");
+      $("practice").innerHTML = lesson.phrases.slice(0, 3).map((item, index) => `<div class="practice-item">
+        <div>${index + 1}. ${escapeHtml(item.zh)}</div>
+        <button class="btn small reveal" data-answer="a-${index}">查看答案</button>
+        <p class="answer" id="a-${index}" lang="it">${escapeHtml(item.it)}</p>
+      </div>`).join("");
+      $("prevBtn").disabled = currentDay === 0;
+      $("nextBtn").disabled = currentDay === lessons.length - 1;
+      const isDone = Boolean(progress.lessons?.[currentDay]);
+      $("completeBtn").textContent = isDone ? "今天已完成" : "完成今天";
+      $("completeBtn").classList.toggle("done", isDone);
+      renderGroups();
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    function renderGroups() {
+      $("lessonGroups").innerHTML = groups.map(([name, start, end]) => `<details class="group" ${currentDay >= start && currentDay <= end ? "open" : ""}>
+        <summary>${escapeHtml(name)}</summary>
+        <div class="lesson-grid">${lessons.slice(start, end + 1).map((lesson, i) => {
+          const index = start + i;
+          const classes = ["lesson-link", index === currentDay ? "current" : "", progress.lessons?.[index] ? "done" : ""].join(" ");
+          return `<button class="${classes}" data-day="${index}">第${index + 1}天<br>${escapeHtml(lesson.title)}</button>`;
+        }).join("")}</div>
+      </details>`).join("");
+    }
+
+    function renderEmergency() {
+      $("emergencyList").innerHTML = emergency.map(item => `<div class="emergency-row">
+        <div><p class="italian" lang="it">${escapeHtml(item.it)}</p><p class="meaning"><span class="english">${escapeHtml(item.en)}</span>${escapeHtml(item.zh)}</p></div>
+        <button class="speak-btn" data-speak="${escapeHtml(item.it)}">播放</button>
+      </div>`).join("");
+    }
+
+    function updateCountdown() {
+      const remaining = Math.ceil((travelDate - dateNow) / dayMs);
+      $("countdown").textContent = remaining > 0 ? `距离 9 月 24 日还有 ${remaining} 天` : "旅行模式已开启";
+    }
+
+    document.addEventListener("click", event => {
+      const speakButton = event.target.closest("[data-speak]");
+      if (speakButton) speak(speakButton.dataset.speak);
+      const knowButton = event.target.closest("[data-know]");
+      if (knowButton) {
+        progress.phrases ||= {};
+        const key = knowButton.dataset.know;
+        progress.phrases[key] = !progress.phrases[key];
+        saveProgress(); renderLesson();
+      }
+      const reveal = event.target.closest("[data-answer]");
+      if (reveal) {
+        const answer = $(reveal.dataset.answer);
+        answer.classList.toggle("show");
+        reveal.textContent = answer.classList.contains("show") ? "隐藏答案" : "查看答案";
+      }
+      const lessonLink = event.target.closest("[data-day]");
+      if (lessonLink) {
+        currentDay = Number(lessonLink.dataset.day);
+        switchView("today"); renderLesson();
+      }
+    });
+
+    function switchView(name) {
+      document.querySelectorAll(".tab").forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.view === name)));
+      document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+      $(`${name}View`).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => switchView(tab.dataset.view)));
+    $("playLesson").addEventListener("click", () => speak(lessons[currentDay].phrases.map(x => x.it).join(" ")));
+    $("playDialogue").addEventListener("click", () => speak(lessons[currentDay].dialogue.map(x => x[1]).join(" ")));
+    $("speedBtn").addEventListener("click", () => {
+      rate = rate === 0.9 ? 0.62 : 0.9;
+      $("speedBtn").textContent = rate < 0.8 ? "语速：慢速" : "语速：正常";
+    });
+    $("prevBtn").addEventListener("click", () => { if (currentDay > 0) { currentDay--; renderLesson(); } });
+    $("nextBtn").addEventListener("click", () => { if (currentDay < lessons.length - 1) { currentDay++; renderLesson(); } });
+    $("completeBtn").addEventListener("click", () => {
+      progress.lessons ||= {};
+      progress.lessons[currentDay] = !progress.lessons[currentDay];
+      saveProgress(); renderLesson();
+    });
+
+    $("recordBtn").addEventListener("click", async () => {
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(mediaStream);
+        chunks = [];
+        mediaRecorder.addEventListener("dataavailable", event => chunks.push(event.data));
+        mediaRecorder.addEventListener("stop", () => {
+          const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
+          $("recording").src = URL.createObjectURL(blob);
+          $("recording").hidden = false;
+          $("recordStatus").textContent = "录音完成。播放后与“播放对话”比较。";
+          mediaStream.getTracks().forEach(track => track.stop());
+        });
+        mediaRecorder.start();
+        $("recordBtn").disabled = true;
+        $("stopBtn").disabled = false;
+        $("recordStatus").textContent = "正在录音...";
+      } catch (error) {
+        $("recordStatus").textContent = "无法使用麦克风。请允许录音权限；手机上建议用浏览器打开通过 HTTPS 发布的页面。";
+      }
+    });
+    $("stopBtn").addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
+      $("recordBtn").disabled = false;
+      $("stopBtn").disabled = true;
+    });
+
+    updateCountdown();
+    renderLesson();
+    renderEmergency();
+  </script>
+</body>
+</html>
