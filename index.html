@@ -76,7 +76,7 @@
     }
     .tabs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 6px;
       padding: 5px;
       border: 1px solid var(--line);
@@ -155,6 +155,7 @@
     .dialogue { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
     .line { padding: 14px 16px; }
     .line + .line { border-top: 1px solid var(--line); }
+    .line.speaking { background: var(--accent-soft); }
     .speaker { color: var(--accent-strong); font-size: .8rem; font-weight: 780; }
     .line-it { margin: 3px 0 0; font-weight: 720; }
     .line-meaning { margin: 3px 0 0; color: var(--muted); font-size: .9rem; }
@@ -177,6 +178,37 @@
     .emergency-list { border-top: 1px solid var(--line); }
     .emergency-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 15px 2px; border-bottom: 1px solid var(--line); }
     .emergency-row .italian { font-size: 1.12rem; }
+    .alphabet-help { margin-bottom: 14px; }
+    .alphabet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .letter-card {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 76px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .letter { font-size: 1.65rem; font-weight: 800; text-align: center; color: var(--accent-strong); }
+    .letter-name { margin: 0; font-weight: 760; }
+    .letter-tip { margin: 2px 0 0; color: var(--muted); font-size: .82rem; }
+    .foreign-title { margin: 24px 0 10px; font-size: 1rem; }
+    .resource-list { display: grid; gap: 10px; }
+    .resource {
+      display: block;
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: var(--surface);
+      text-decoration: none;
+    }
+    .resource:active { transform: translateY(1px); }
+    .resource-source { color: var(--accent-strong); font-size: .78rem; font-weight: 780; }
+    .resource-title { margin: 4px 0 0; font-weight: 780; }
+    .resource-why { margin: 5px 0 0; color: var(--muted); font-size: .88rem; }
     .empty { padding: 22px; text-align: center; color: var(--muted); border: 1px solid var(--line); border-radius: var(--radius); }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
     @media (max-width: 420px) {
@@ -184,6 +216,7 @@
       .phrase { grid-template-columns: 1fr; }
       .phrase-controls { grid-template-columns: 1fr 1fr; }
       .lesson-grid { grid-template-columns: 1fr; }
+      .alphabet-grid { grid-template-columns: 1fr; }
       .lesson-nav { grid-template-columns: 1fr 1fr; }
       .lesson-nav #completeBtn { grid-column: 1 / -1; grid-row: 1; }
     }
@@ -202,6 +235,7 @@
     <nav class="tabs" aria-label="主要页面">
       <button class="tab" data-view="today" aria-selected="true">今天</button>
       <button class="tab" data-view="all" aria-selected="false">30天</button>
+      <button class="tab" data-view="basics" aria-selected="false">发音</button>
       <button class="tab" data-view="emergency" aria-selected="false">急救句</button>
     </nav>
 
@@ -230,8 +264,10 @@
         <h2>真实对话</h2>
         <div class="dialogue" id="dialogue"></div>
         <div class="lesson-actions">
-          <button class="btn small" id="playDialogue">播放对话</button>
+          <button class="btn small" id="playDialogue">自然播放</button>
+          <button class="btn small" id="stopDialogue">停止</button>
         </div>
+        <p class="record-status" id="dialogueStatus" aria-live="polite">逐句播放，角色之间会留出回答时间。</p>
       </section>
 
       <section class="section">
@@ -272,6 +308,24 @@
         <p class="goal">点“播放”给对方听，也可以把意大利语文字直接展示给对方看。</p>
       </div>
       <div class="emergency-list" id="emergencyList"></div>
+    </section>
+
+    <section class="view" id="basicsView">
+      <div class="lesson-head">
+        <p class="lesson-label">先会读，再开口</p>
+        <h1>意大利语字母表</h1>
+        <p class="goal">意大利语主要使用 21 个字母。点每个字母旁边的按钮，听字母名和例词。</p>
+      </div>
+      <div class="note alphabet-help">你会英语音标，所以先抓住一个原则：意大利语大多“看见什么就读什么”。字母名用于拼写姓名，例词更接近日常发音。</div>
+      <div class="alphabet-grid" id="alphabet"></div>
+      <h2 class="foreign-title">只在外来词中常见的 5 个字母</h2>
+      <div class="alphabet-grid" id="foreignAlphabet"></div>
+
+      <section class="section">
+        <h2>精选真人内容</h2>
+        <div class="note alphabet-help">只放与这 30 天目标直接相关、且播放和互动表现较好的内容。视频是补充，每天看 5 到 10 分钟即可。</div>
+        <div class="resource-list" id="resources"></div>
+      </section>
     </section>
   </main>
 
@@ -511,6 +565,62 @@
       ["生存基础",0,3], ["问路和交通",4,8], ["酒店",9,12], ["咖啡和餐厅",13,18],
       ["购物和景点",19,21], ["健康和求助",22,24], ["全流程模拟",25,29]
     ];
+    const alphabet = [
+      ["A a","a","/a/，像 father 的 a","amico"],
+      ["B b","bi","/b/，像 bee 的开头","bene"],
+      ["C c","ci","字母名像 chee","ciao"],
+      ["D d","di","/d/，像 dee 的开头","dove"],
+      ["E e","e","/e/ 或 /ɛ/，嘴角略展开","euro"],
+      ["F f","effe","读作 EF-feh","farmacia"],
+      ["G g","gi","字母名像英语 gee","gelato"],
+      ["H h","acca","读作 AH-kah，本身不发音","hotel"],
+      ["I i","i","/i/，像 machine 的 i","Italia"],
+      ["L l","elle","读作 EL-leh","latte"],
+      ["M m","emme","读作 EM-meh","menu"],
+      ["N n","enne","读作 EN-neh","nome"],
+      ["O o","o","/o/ 或 /ɔ/，不要滑成 ou","oggi"],
+      ["P p","pi","/p/，送气比英语轻","pizza"],
+      ["Q q","cu","读作 koo，常和 u 连用","quanto"],
+      ["R r","erre","读作 ER-reh，轻弹舌也能听懂","Roma"],
+      ["S s","esse","读作 ES-seh","scusi"],
+      ["T t","ti","/t/，送气比英语轻","treno"],
+      ["U u","u","/u/，像 food 的 oo","uno"],
+      ["V v","vu","读作 voo","vino"],
+      ["Z z","zeta","读作 DZEH-tah","zero"]
+    ];
+    const foreignAlphabet = [
+      ["J j","i lunga","EE LOON-gah","jeans"],
+      ["K k","cappa","KAP-pah","kiwi"],
+      ["W w","doppia vu","DOP-pyah voo","web"],
+      ["X x","ics","eeks","taxi"],
+      ["Y y","ipsilon","EEP-see-lon","yogurt"]
+    ];
+    const resources = [
+      {
+        source: "YouTube · Learn Italian with Lucrezia",
+        title: "零基础立刻能说的 12 句话",
+        why: "118 万次播放，3 万点赞。真人示范清楚，先看这一条。",
+        url: "https://www.youtube.com/watch?v=Bu-oIak-Ma4"
+      },
+      {
+        source: "YouTube · Easy Italian",
+        title: "游客最容易说错的旅行句",
+        why: "5.6 万次播放，2200 点赞。意英双字幕，能听到自然对话。",
+        url: "https://www.youtube.com/watch?v=jsqj5q06elo"
+      },
+      {
+        source: "哔哩哔哩 · 深水在深水里",
+        title: "从 0 基础到学会意大利语",
+        why: "69.2 万次播放，3 万点赞。P1 是字母发音，P23 是旅行听力。",
+        url: "https://www.bilibili.com/video/BV1D4411n7o2/"
+      },
+      {
+        source: "哔哩哔哩 · 中英意字幕课程",
+        title: "意大利语全套教程精选",
+        why: "71.2 万次播放，2.4 万点赞。前 5 集集中解决发音和重音。",
+        url: "https://www.bilibili.com/video/BV1G14y1t7Mk/"
+      }
+    ];
     const startDate = new Date("2026-08-26T00:00:00+08:00");
     const travelDate = new Date("2026-09-24T00:00:00+08:00");
     const dateNow = new Date();
@@ -521,23 +631,76 @@
     let mediaRecorder;
     let mediaStream;
     let chunks = [];
+    let speechRun = 0;
     const progress = JSON.parse(localStorage.getItem("italian30-progress") || "{}");
 
     const $ = id => document.getElementById(id);
     const escapeHtml = value => String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 
-    function speak(text, selectedRate = rate) {
+    function italianVoices() {
+      const preferred = ["google", "premium", "enhanced", "federica", "alice", "luca", "elsa"];
+      return speechSynthesis.getVoices()
+        .filter(voice => voice.lang && voice.lang.toLowerCase().startsWith("it"))
+        .sort((a, b) => {
+          const rank = voice => {
+            const name = voice.name.toLowerCase();
+            const match = preferred.findIndex(word => name.includes(word));
+            return (match < 0 ? 50 : match) + (voice.localService ? 5 : 0);
+          };
+          return rank(a) - rank(b);
+        });
+    }
+
+    function stopSpeech() {
+      speechRun++;
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
+      $("dialogueStatus").textContent = "已停止。再次点击“自然播放”可从头开始。";
+    }
+
+    function speakSequence(items, options = {}) {
       if (!("speechSynthesis" in window)) {
         alert("当前浏览器不支持文字朗读。请换用手机系统浏览器或 Chrome。" );
         return;
       }
       speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "it-IT";
-      utterance.rate = selectedRate;
-      const voices = speechSynthesis.getVoices();
-      utterance.voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("it")) || null;
-      speechSynthesis.speak(utterance);
+      document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
+      const run = ++speechRun;
+      const voices = italianVoices();
+      let index = 0;
+      const next = () => {
+        if (run !== speechRun || index >= items.length) {
+          if (options.dialogue && run === speechRun) {
+            document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
+            $("dialogueStatus").textContent = "播放完成。现在换你扮演“你”，再跟读一遍。";
+          }
+          return;
+        }
+        const item = typeof items[index] === "string" ? { text: items[index] } : items[index];
+        if (options.dialogue) {
+          document.querySelectorAll(".line").forEach((line, lineIndex) => line.classList.toggle("speaking", lineIndex === index));
+          $("dialogueStatus").textContent = `${item.speaker}正在说，第 ${index + 1} 句，共 ${items.length} 句`;
+        }
+        const utterance = new SpeechSynthesisUtterance(item.text);
+        utterance.lang = "it-IT";
+        utterance.rate = item.rate || rate;
+        utterance.pitch = 1;
+        utterance.voice = voices[(item.voiceIndex || 0) % Math.max(voices.length, 1)] || null;
+        utterance.onend = () => {
+          index++;
+          window.setTimeout(next, options.pause || 420);
+        };
+        utterance.onerror = () => {
+          index++;
+          next();
+        };
+        speechSynthesis.speak(utterance);
+      };
+      next();
+    }
+
+    function speak(text, selectedRate = rate) {
+      speakSequence([{ text, rate: selectedRate, voiceIndex: 0 }]);
     }
 
     function saveProgress() {
@@ -545,6 +708,8 @@
     }
 
     function renderLesson() {
+      speechRun++;
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
       const lesson = lessons[currentDay];
       $("dayChip").textContent = `第 ${currentDay + 1} 天`;
       $("lessonLabel").textContent = `第 ${currentDay + 1} 课`;
@@ -572,6 +737,7 @@
         <p class="line-it" lang="it">${escapeHtml(line[1])}</p>
         <p class="line-meaning">${escapeHtml(line[2])}</p>
       </div>`).join("");
+      $("dialogueStatus").textContent = "逐句播放，角色之间会留出回答时间。";
       $("practice").innerHTML = lesson.phrases.slice(0, 3).map((item, index) => `<div class="practice-item">
         <div>${index + 1}. ${escapeHtml(item.zh)}</div>
         <button class="btn small reveal" data-answer="a-${index}">查看答案</button>
@@ -602,6 +768,25 @@
         <div><p class="italian" lang="it">${escapeHtml(item.it)}</p><p class="meaning"><span class="english">${escapeHtml(item.en)}</span>${escapeHtml(item.zh)}</p></div>
         <button class="speak-btn" data-speak="${escapeHtml(item.it)}">播放</button>
       </div>`).join("");
+    }
+
+    function renderAlphabetCards(items, target) {
+      $(target).innerHTML = items.map(item => `<article class="letter-card">
+        <div class="letter" aria-hidden="true">${escapeHtml(item[0])}</div>
+        <div>
+          <p class="letter-name">${escapeHtml(item[1])}</p>
+          <p class="letter-tip">${escapeHtml(item[2])}<br>例词：<span lang="it">${escapeHtml(item[3])}</span></p>
+        </div>
+        <button class="speak-btn" data-speak="${escapeHtml(`${item[1]}. ${item[3]}`)}" aria-label="播放 ${escapeHtml(item[0])}">播放</button>
+      </article>`).join("");
+    }
+
+    function renderResources() {
+      $("resources").innerHTML = resources.map(item => `<a class="resource" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+        <div class="resource-source">${escapeHtml(item.source)}</div>
+        <p class="resource-title">${escapeHtml(item.title)}</p>
+        <p class="resource-why">${escapeHtml(item.why)}</p>
+      </a>`).join("");
     }
 
     function updateCountdown() {
@@ -639,8 +824,18 @@
       window.scrollTo({ top: 0, behavior: "instant" });
     }
     document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => switchView(tab.dataset.view)));
-    $("playLesson").addEventListener("click", () => speak(lessons[currentDay].phrases.map(x => x.it).join(" ")));
-    $("playDialogue").addEventListener("click", () => speak(lessons[currentDay].dialogue.map(x => x[1]).join(" ")));
+    $("playLesson").addEventListener("click", () => speakSequence(lessons[currentDay].phrases.map((item, index) => ({
+      text: item.it,
+      rate,
+      voiceIndex: index % 2
+    })), { pause: rate < .8 ? 650 : 420 }));
+    $("playDialogue").addEventListener("click", () => speakSequence(lessons[currentDay].dialogue.map((line, index) => ({
+      text: line[1],
+      speaker: line[0],
+      rate: rate < .8 ? .68 : (index % 2 ? .88 : .92),
+      voiceIndex: index % 2
+    })), { dialogue: true, pause: rate < .8 ? 900 : 560 }));
+    $("stopDialogue").addEventListener("click", stopSpeech);
     $("speedBtn").addEventListener("click", () => {
       rate = rate === 0.9 ? 0.62 : 0.9;
       $("speedBtn").textContent = rate < 0.8 ? "语速：慢速" : "语速：正常";
@@ -683,6 +878,10 @@
     updateCountdown();
     renderLesson();
     renderEmergency();
+    renderAlphabetCards(alphabet, "alphabet");
+    renderAlphabetCards(foreignAlphabet, "foreignAlphabet");
+    renderResources();
+    if ("speechSynthesis" in window) speechSynthesis.addEventListener?.("voiceschanged", italianVoices);
   </script>
 </body>
 </html>
