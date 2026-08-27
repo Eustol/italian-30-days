@@ -209,6 +209,22 @@
     .resource-source { color: var(--accent-strong); font-size: .78rem; font-weight: 780; }
     .resource-title { margin: 4px 0 0; font-weight: 780; }
     .resource-why { margin: 5px 0 0; color: var(--muted); font-size: .88rem; }
+    .daily-media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .media-link {
+      display: block;
+      min-height: 112px;
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: var(--surface);
+      text-decoration: none;
+    }
+    .media-link.teach { border-color: var(--accent); background: var(--accent-soft); }
+    .media-link:active { transform: translateY(1px); }
+    .media-kind { color: var(--accent-strong); font-size: .8rem; font-weight: 800; }
+    .media-title { margin: 5px 0 0; font-weight: 780; line-height: 1.35; }
+    .media-source { margin: 7px 0 0; color: var(--muted); font-size: .82rem; }
     .empty { padding: 22px; text-align: center; color: var(--muted); border: 1px solid var(--line); border-radius: var(--radius); }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
     @media (max-width: 420px) {
@@ -217,6 +233,7 @@
       .phrase-controls { grid-template-columns: 1fr 1fr; }
       .lesson-grid { grid-template-columns: 1fr; }
       .alphabet-grid { grid-template-columns: 1fr; }
+      .daily-media { grid-template-columns: 1fr; }
       .lesson-nav { grid-template-columns: 1fr 1fr; }
       .lesson-nav #completeBtn { grid-column: 1 / -1; grid-row: 1; }
     }
@@ -253,6 +270,11 @@
       <section class="section">
         <h2>今天怎么读</h2>
         <div class="note" id="pronunciation"></div>
+      </section>
+
+      <section class="section">
+        <h2>今天的视频</h2>
+        <div class="daily-media" id="dailyMedia"></div>
       </section>
 
       <section class="section">
@@ -621,6 +643,128 @@
         url: "https://www.bilibili.com/video/BV1G14y1t7Mk/"
       }
     ];
+    const dailyMedia = [
+      {
+        teach:["问候、礼貌和开口方式","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=3"],
+        listen:["Excuse me, do you speak English?","B站短场景听力","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=4"]
+      },
+      {
+        teach:["数字、问候和基础表达","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=3"],
+        listen:["Italian Numbers 1-10","B站短场景听力","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=6"]
+      },
+      {
+        teach:["简单对话和时间表达","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=9"],
+        listen:["What Time Is It?","B站短场景听力","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=25"]
+      },
+      {
+        teach:["听不懂时怎样继续交流","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=7"],
+        listen:["How Do You Say It in Italian?","B站短场景听力","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=20"]
+      },
+      {
+        teach:["日常问路对话","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=10"],
+        listen:["Directions","B站短场景听力","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=24"]
+      },
+      {
+        teach:["左右、地点和问路表达","B站中文讲解","https://www.bilibili.com/video/BV1G14y1t7Mk/?p=11"],
+        listen:["慢速问路场景","B站短场景听力","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=24"]
+      },
+      {
+        teach:["城市交通工具","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=14"],
+        listen:["巴士出行情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=17"]
+      },
+      {
+        teach:["售票窗口买票对话","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=3"],
+        listen:["火车站情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=7"]
+      },
+      {
+        teach:["火车站和站台表达","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=7"],
+        listen:["公交与火车情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=12"]
+      },
+      {
+        teach:["酒店入住常用语","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=65"],
+        listen:["酒店必备情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=75"]
+      },
+      {
+        teach:["询问酒店设施和服务","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=65"],
+        listen:["酒店必备情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=75"]
+      },
+      {
+        teach:["酒店问题处理对话","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=75"],
+        listen:["酒店服务完整听力","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=65"]
+      },
+      {
+        teach:["退房、寄存和付款表达","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=65"],
+        listen:["支付与金钱情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=64"]
+      },
+      {
+        teach:["咖啡馆点单基础表达","B站中文讲解","https://www.bilibili.com/video/BV16aGiznEBp/"],
+        listen:["How to Order a Coffee in Italy","B站真人意英字幕","https://www.bilibili.com/video/BV1xt4y1Y7eS/?p=12"]
+      },
+      {
+        teach:["餐厅入座和基本交流","B站中文讲解","https://www.bilibili.com/video/BV1D4411n7o2/?p=27"],
+        listen:["餐厅完整情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=50"]
+      },
+      {
+        teach:["菜单、推荐和菜品表达","B站中文讲解","https://www.bilibili.com/video/BV19m4y1z7kw/"],
+        listen:["高级餐厅用餐对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=28"]
+      },
+      {
+        teach:["意大利餐厅点餐流程","B站中文讲解","https://www.bilibili.com/video/BV19m4y1z7kw/"],
+        listen:["餐厅学习对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=34"]
+      },
+      {
+        teach:["过敏反应和忌口表达","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=26"],
+        listen:["健康食品购物对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=82"]
+      },
+      {
+        teach:["索要账单和付款","B站短场景讲解","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=13"],
+        listen:["支付与金钱情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=64"]
+      },
+      {
+        teach:["询价和价格表达","B站短场景讲解","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=8"],
+        listen:["商店购物情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=51"]
+      },
+      {
+        teach:["售票窗口和预约表达","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=3"],
+        listen:["艺术画廊参观对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=72"]
+      },
+      {
+        teach:["请别人帮忙拍照","B站短场景讲解","https://www.bilibili.com/video/BV1sT4y1N7Za/?p=19"],
+        listen:["游客常说错的旅行表达","YouTube 真人对话","https://www.youtube.com/watch?v=jsqj5q06elo"]
+      },
+      {
+        teach:["药店购药和描述不适","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=68"],
+        listen:["药店购药完整对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=85"]
+      },
+      {
+        teach:["求助、报警和遗失物品","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=21"],
+        listen:["警察局情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=1"]
+      },
+      {
+        teach:["20 个旅行必备句","YouTube 英语讲解","https://www.youtube.com/watch?v=NHaDGqtzTFI"],
+        listen:["旅行对话听力练习","B站中文辅助听力","https://www.bilibili.com/video/BV1D4411n7o2/?p=24"]
+      },
+      {
+        teach:["酒店全流程复习","B站中意双语讲解","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=65"],
+        listen:["酒店必备完整对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=75"]
+      },
+      {
+        teach:["餐厅点餐全流程复习","B站中文讲解","https://www.bilibili.com/video/BV19m4y1z7kw/"],
+        listen:["餐厅完整情景对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=50"]
+      },
+      {
+        teach:["城市旅行必备表达复习","YouTube 英语讲解","https://www.youtube.com/watch?v=NHaDGqtzTFI"],
+        listen:["自然意大利语对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=70"]
+      },
+      {
+        teach:["零基础最重要的 12 句话","YouTube 真人讲解","https://www.youtube.com/watch?v=Bu-oIak-Ma4"],
+        listen:["旅行表达真人纠错","YouTube 真人对话","https://www.youtube.com/watch?v=jsqj5q06elo"]
+      },
+      {
+        teach:["落地前旅行口语总复习","YouTube 英语讲解","https://www.youtube.com/watch?v=NHaDGqtzTFI"],
+        listen:["自然意大利语完整对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=70"]
+      }
+    ];
     const startDate = new Date("2026-08-26T00:00:00+08:00");
     const travelDate = new Date("2026-09-24T00:00:00+08:00");
     const dateNow = new Date();
@@ -707,6 +851,16 @@
       localStorage.setItem("italian30-progress", JSON.stringify(progress));
     }
 
+    function renderDailyMedia() {
+      const media = dailyMedia[currentDay];
+      const card = (item, kind, className) => `<a class="media-link ${className}" href="${escapeHtml(item[2])}" target="_blank" rel="noopener noreferrer">
+        <div class="media-kind">${kind}</div>
+        <p class="media-title">${escapeHtml(item[0])}</p>
+        <p class="media-source">${escapeHtml(item[1])}，点击打开</p>
+      </a>`;
+      $("dailyMedia").innerHTML = card(media.teach, "当天讲解视频", "teach") + card(media.listen, "磨耳朵", "listen");
+    }
+
     function renderLesson() {
       speechRun++;
       if ("speechSynthesis" in window) speechSynthesis.cancel();
@@ -716,6 +870,7 @@
       $("lessonTitle").textContent = lesson.title;
       $("lessonGoal").textContent = lesson.goal;
       $("pronunciation").textContent = lesson.note;
+      renderDailyMedia();
       $("phrases").innerHTML = lesson.phrases.map((item, index) => {
         const key = `${currentDay}-${index}`;
         const known = progress.phrases?.[key];
