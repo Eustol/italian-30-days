@@ -103,6 +103,15 @@
     h1 { margin: 0; font-size: clamp(2rem, 9vw, 3.7rem); line-height: 1.03; letter-spacing: -.055em; }
     .goal { max-width: 52ch; margin: 14px 0 0; color: var(--muted); font-size: 1rem; }
     .lesson-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .lesson-media {
+      margin-top: 20px;
+      padding: 14px;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--accent-soft);
+    }
+    .lesson-media h2 { margin: 0 0 4px; font-size: 1.06rem; }
+    .lesson-media-help { margin: 0 0 11px; color: var(--muted); font-size: .86rem; }
     .btn {
       min-height: 44px;
       padding: 10px 14px;
@@ -220,11 +229,12 @@
       background: var(--surface);
       text-decoration: none;
     }
-    .media-link.teach { border-color: var(--accent); background: var(--accent-soft); }
+    .media-link.teach { border-color: var(--accent); }
     .media-link:active { transform: translateY(1px); }
     .media-kind { color: var(--accent-strong); font-size: .8rem; font-weight: 800; }
     .media-title { margin: 5px 0 0; font-weight: 780; line-height: 1.35; }
     .media-source { margin: 7px 0 0; color: var(--muted); font-size: .82rem; }
+    .media-open { display: block; margin-top: 9px; color: var(--accent-strong); font-weight: 780; font-size: .86rem; }
     .empty { padding: 22px; text-align: center; color: var(--muted); border: 1px solid var(--line); border-radius: var(--radius); }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
     @media (max-width: 420px) {
@@ -265,16 +275,16 @@
           <button class="btn primary" id="playLesson">播放本课</button>
           <button class="btn" id="speedBtn">语速：正常</button>
         </div>
+        <div class="lesson-media" aria-labelledby="dailyMediaTitle">
+          <h2 id="dailyMediaTitle">今天先看：2 个视频链接</h2>
+          <p class="lesson-media-help">点击下面任意卡片，会打开对应视频。</p>
+          <div class="daily-media" id="dailyMedia"></div>
+        </div>
       </div>
 
       <section class="section">
         <h2>今天怎么读</h2>
         <div class="note" id="pronunciation"></div>
-      </section>
-
-      <section class="section">
-        <h2>今天的视频</h2>
-        <div class="daily-media" id="dailyMedia"></div>
       </section>
 
       <section class="section">
@@ -856,7 +866,8 @@
       const card = (item, kind, className) => `<a class="media-link ${className}" href="${escapeHtml(item[2])}" target="_blank" rel="noopener noreferrer">
         <div class="media-kind">${kind}</div>
         <p class="media-title">${escapeHtml(item[0])}</p>
-        <p class="media-source">${escapeHtml(item[1])}，点击打开</p>
+        <p class="media-source">${escapeHtml(item[1])}</p>
+        <span class="media-open">打开视频链接 ↗</span>
       </a>`;
       $("dailyMedia").innerHTML = card(media.teach, "当天讲解视频", "teach") + card(media.listen, "磨耳朵", "listen");
     }
