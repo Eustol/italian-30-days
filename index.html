@@ -135,6 +135,18 @@
       color: var(--muted);
       background: var(--accent-soft);
     }
+    .toolkit-intro { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+    .toolkit-groups { display: grid; gap: 14px; }
+    .toolkit-group { padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .toolkit-group h3 { margin: 0 0 10px; font-size: .96rem; }
+    .toolkit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .toolkit-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 10px; border-radius: calc(var(--radius) - 3px); background: var(--bg); }
+    .toolkit-it { margin: 0; font-weight: 780; line-height: 1.25; }
+    .toolkit-en { margin: 3px 0 0; color: var(--text); font-size: .8rem; }
+    .toolkit-zh, .toolkit-read { margin: 2px 0 0; color: var(--muted); font-size: .78rem; }
+    .toolkit-play { min-width: 42px; min-height: 34px; padding: 5px 8px; border: 1px solid var(--line); border-radius: calc(var(--radius) - 3px); color: var(--text); background: var(--surface); cursor: pointer; font-size: .78rem; font-weight: 720; }
+    .toolkit-patterns { display: grid; gap: 7px; margin-top: 12px; }
+    .toolkit-pattern { padding: 10px 12px; border-left: 3px solid var(--accent); color: var(--muted); background: var(--accent-soft); font-size: .88rem; }
     .phrases { border-top: 1px solid var(--line); }
     .phrase {
       display: grid;
@@ -244,6 +256,7 @@
       .lesson-grid { grid-template-columns: 1fr; }
       .alphabet-grid { grid-template-columns: 1fr; }
       .daily-media { grid-template-columns: 1fr; }
+      .toolkit-grid { grid-template-columns: 1fr; }
       .lesson-nav { grid-template-columns: 1fr 1fr; }
       .lesson-nav #completeBtn { grid-column: 1 / -1; grid-row: 1; }
     }
@@ -285,6 +298,13 @@
       <section class="section">
         <h2>今天怎么读</h2>
         <div class="note" id="pronunciation"></div>
+      </section>
+
+      <section class="section">
+        <h2>场景工具箱</h2>
+        <p class="toolkit-intro" id="toolkitIntro"></p>
+        <div class="toolkit-groups" id="toolkitGroups"></div>
+        <div class="toolkit-patterns" id="toolkitPatterns"></div>
       </section>
 
       <section class="section">
@@ -852,12 +872,156 @@
       [["司机","Dove va?","您去哪里？"],["你","In questo hotel, per favore.","请去这家酒店。"],["司机","Va bene, partiamo.","好的，我们出发。"]]
     ];
 
+    const v = (it, en, zh, read) => ({ it, en, zh, read });
+    const lessonToolkits = [
+      { intro:"先掌握一天中不同的问候，再用礼貌词接上任何需求。", groups:[
+        ["问候时间",[v("Buongiorno","Good morning / day","早上好、白天好","bwon-JOR-no"),v("Buonasera","Good evening","晚上好","bwoh-na-SEH-ra"),v("Salve","Hello","您好","SAL-veh"),v("Arrivederci","Goodbye","再见","ar-ree-veh-DER-chee")]],
+        ["礼貌连接词",[v("Scusi","Excuse me","劳驾","SKOO-zee"),v("Per favore","Please","请","pair fa-VOH-reh"),v("Grazie","Thank you","谢谢","GRAHT-tsyeh"),v("Prego","You're welcome","不客气","PREH-go"),v("Mi dispiace","I'm sorry","抱歉","mee dee-SPYA-cheh")]]
+      ], patterns:["Scusi + 你的问题：先礼貌开口，再直接说需求。","需求 + per favore：把“请”放在句尾最安全。"] },
+      { intro:"不只背价格。先会从0数到20，再掌握整十、百和欧元分。", groups:[
+        ["0-10",[v("zero","zero","0","DZEH-ro"),v("uno","one","1","OO-no"),v("due","two","2","DOO-eh"),v("tre","three","3","treh"),v("quattro","four","4","KWAT-tro"),v("cinque","five","5","CHEEN-kweh"),v("sei","six","6","say"),v("sette","seven","7","SET-teh"),v("otto","eight","8","OT-to"),v("nove","nine","9","NO-veh"),v("dieci","ten","10","DYEH-chee")]],
+        ["11-20",[v("undici","eleven","11","OON-dee-chee"),v("dodici","twelve","12","DO-dee-chee"),v("tredici","thirteen","13","TREH-dee-chee"),v("quattordici","fourteen","14","kwat-TOR-dee-chee"),v("quindici","fifteen","15","KWEEN-dee-chee"),v("sedici","sixteen","16","SEH-dee-chee"),v("diciassette","seventeen","17","dee-chas-SET-teh"),v("diciotto","eighteen","18","dee-CHOT-to"),v("diciannove","nineteen","19","dee-chan-NO-veh"),v("venti","twenty","20","VEN-tee")]],
+        ["整十与金额",[v("trenta","thirty","30","TREN-ta"),v("quaranta","forty","40","kwa-RAN-ta"),v("cinquanta","fifty","50","cheen-KWAN-ta"),v("sessanta","sixty","60","ses-SAN-ta"),v("settanta","seventy","70","set-TAN-ta"),v("ottanta","eighty","80","ot-TAN-ta"),v("novanta","ninety","90","no-VAN-ta"),v("cento","one hundred","100","CHEN-to"),v("un euro","one euro","1欧元","oon EH-oo-ro"),v("cinquanta centesimi","fifty cents","50欧分","cheen-KWAN-ta chen-TEH-zee-mee")]]
+      ], patterns:["21 = ventuno，28 = ventotto。venti 遇到 uno 或 otto 时，词尾 i 会省掉。","35 = trentacinque：整十直接接个位。","€12.50 可以说 dodici euro e cinquanta centesimi。"] },
+      { intro:"星期、月份和钟点放在一起学，才能真正确认车票和预约。", groups:[
+        ["星期",[v("lunedì","Monday","星期一","loo-neh-DEE"),v("martedì","Tuesday","星期二","mar-teh-DEE"),v("mercoledì","Wednesday","星期三","mair-ko-leh-DEE"),v("giovedì","Thursday","星期四","jo-veh-DEE"),v("venerdì","Friday","星期五","veh-nair-DEE"),v("sabato","Saturday","星期六","SA-ba-to"),v("domenica","Sunday","星期日","do-MEH-nee-ka")]],
+        ["月份",[v("gennaio","January","一月","jen-NA-yo"),v("febbraio","February","二月","feb-BRA-yo"),v("marzo","March","三月","MAR-tso"),v("aprile","April","四月","a-PREE-leh"),v("maggio","May","五月","MAD-jo"),v("giugno","June","六月","JOO-nyo"),v("luglio","July","七月","LOO-lyo"),v("agosto","August","八月","a-GOS-to"),v("settembre","September","九月","set-TEM-breh"),v("ottobre","October","十月","ot-TO-breh"),v("novembre","November","十一月","no-VEM-breh"),v("dicembre","December","十二月","dee-CHEM-breh")]],
+        ["几点怎么说",[v("È l'una","It's one","1点","eh LOO-na"),v("Sono le due","It's two","2点","SO-no leh DOO-eh"),v("Sono le tre e dieci","It's 3:10","3点10分","SO-no leh treh eh DYEH-chee"),v("Sono le quattro e mezza","It's 4:30","4点半","SO-no leh KWAT-tro eh MET-tsa"),v("Sono le cinque e un quarto","It's 5:15","5点一刻","SO-no leh CHEEN-kweh eh oon KWAR-to"),v("Sono le sei meno un quarto","It's 5:45","差一刻6点","SO-no leh say MEH-no oon KWAR-to"),v("mezzogiorno","noon","中午12点","met-tso-JOR-no"),v("mezzanotte","midnight","午夜12点","met-tsa-NOT-teh")]]
+      ], patterns:["只有1点用 È l'una；2点以后用 Sono le + 数字。","日期通常说 il + 数字 + 月份：il ventiquattro settembre。","出发时间用 alle + 钟点：alle nove e mezza。"] },
+      { intro:"听不懂时需要的不只是一个句子，还要会控制速度、重复和展示方式。", groups:[
+        ["让对方调整",[v("più lentamente","more slowly","更慢一点","pyoo len-ta-MEN-teh"),v("di nuovo","again","再一次","dee NWOH-vo"),v("una parola alla volta","one word at a time","一次说一个词","OO-na pa-RO-la AL-la VOL-ta"),v("scrivere","to write","写下来","SKREE-veh-reh"),v("mostrare","to show","指给我看","mos-TRA-reh")]],
+        ["疑问词",[v("che cosa","what","什么","keh KO-za"),v("dove","where","哪里","DO-veh"),v("quando","when","什么时候","KWAN-do"),v("quanto","how much / long","多少、多久","KWAN-to"),v("quale","which","哪一个","KWA-leh")]]
+      ], patterns:["Può + 动词？可以礼貌地请对方做某事。","Non ho capito + 具体内容：说明刚才哪部分没听懂。"] },
+      { intro:"先会问地点，再把车站、酒店、卫生间和景点自由替换进去。", groups:[
+        ["常见地点",[v("la stazione","station","火车站","la sta-TSYO-neh"),v("la fermata","stop","公交站","la fer-MA-ta"),v("la metropolitana","metro","地铁","la meh-tro-po-lee-TA-na"),v("il bagno","restroom","卫生间","eel BAN-nyo"),v("l'hotel","hotel","酒店","lo-TEL"),v("il museo","museum","博物馆","eel moo-ZEH-o"),v("la farmacia","pharmacy","药店","la far-ma-CHEE-a"),v("il centro","city centre","市中心","eel CHEN-tro")]],
+        ["距离与位置",[v("vicino","near","近","vee-CHEE-no"),v("lontano","far","远","lon-TA-no"),v("qui","here","这里","kwee"),v("lì","there","那里","lee"),v("a piedi","on foot","步行","a PYEH-dee")]]
+      ], patterns:["Dov'è + 单数地点？例如 Dov'è la stazione?","Come arrivo a + 地点？表示“我怎么到……”。"] },
+      { intro:"方向要形成一张脑内地图：前后左右、里面外面、上下和路口。", groups:[
+        ["方向",[v("davanti","in front","前面","da-VAN-tee"),v("dietro","behind","后面","DYEH-tro"),v("a destra","to the right","右边","a DES-tra"),v("a sinistra","to the left","左边","a see-NEES-tra"),v("sempre dritto","straight ahead","一直直走","SEM-preh DREET-to"),v("dentro","inside","里面","DEN-tro"),v("fuori","outside","外面","FWO-ree"),v("sopra","above","上面","SO-pra"),v("sotto","below","下面","SOT-to")]],
+        ["道路参照物",[v("l'angolo","corner","路口、拐角","LAN-go-lo"),v("il semaforo","traffic light","红绿灯","eel seh-MA-fo-ro"),v("l'incrocio","intersection","十字路口","leen-KRO-cho"),v("il ponte","bridge","桥","eel PON-teh"),v("la strada","street","街道","la STRA-da"),v("di fronte a","opposite","在……对面","dee FRON-teh a")]]
+      ], patterns:["giri a destra / sinistra：向右转 / 向左转。","È davanti a + 地点：它在某地前面。","dopo / prima del semaforo：红绿灯之后 / 之前。"] },
+      { intro:"把公交、地铁、有轨电车、线路、站点、换乘和打票放在同一课。", groups:[
+        ["交通工具",[v("l'autobus","bus","公交车","LOW-to-boos"),v("la metropolitana","metro","地铁","la meh-tro-po-lee-TA-na"),v("il tram","tram","有轨电车","eel tram"),v("il taxi","taxi","出租车","eel TAK-see"),v("la linea","line","线路","la LEE-neh-a")]],
+        ["乘车动作",[v("la fermata","stop","车站","la fer-MA-ta"),v("il capolinea","last stop","终点站","eel ka-po-LEE-neh-a"),v("salire","to get on","上车","sa-LEE-reh"),v("scendere","to get off","下车","SHEN-deh-reh"),v("cambiare","to change","换乘","kam-BYAH-reh"),v("convalidare","to validate","打票、激活车票","kon-va-lee-DA-reh"),v("la coincidenza","connection","换乘衔接","la ko-een-chee-DEN-tsa"),v("la direzione","direction","行驶方向","la dee-reh-TSYO-neh")]]
+      ], patterns:["Prendo la linea A：我乘A线。","Cambio a + 站名：我在某站换乘。","Dove devo scendere?：我应该在哪里下车？"] },
+      { intro:"火车票要能组合目的地、日期、人数、单程往返和座位。", groups:[
+        ["车票选择",[v("solo andata","one way","单程","SO-lo an-DA-ta"),v("andata e ritorno","return","往返","an-DA-ta eh ree-TOR-no"),v("prima classe","first class","一等座","PREE-ma KLAS-seh"),v("seconda classe","second class","二等座","seh-KON-da KLAS-seh"),v("posto finestrino","window seat","靠窗座位","POS-to fee-neh-STREE-no"),v("posto corridoio","aisle seat","靠过道座位","POS-to kor-ree-DO-yo")]],
+        ["行程",[v("diretto","direct","直达","dee-RET-to"),v("con cambio","with a change","需要换乘","kon KAM-byo"),v("partenza","departure","出发","par-TEN-tsa"),v("arrivo","arrival","到达","ar-REE-vo")]]
+      ], patterns:["Vorrei + 数量 + biglietto/i + per + 城市。","per domani mattina / stasera：明早 / 今晚。"] },
+      { intro:"在车站要能看懂站台、出发、到达、晚点和取消。", groups:[
+        ["车站屏幕",[v("il binario","platform","站台","eel bee-NA-ryo"),v("partenze","departures","出发列车","par-TEN-tseh"),v("arrivi","arrivals","到达列车","ar-REE-vee"),v("in orario","on time","准点","een oh-RA-ryo"),v("in ritardo","delayed","晚点","een ree-TAR-do"),v("cancellato","cancelled","取消","kan-chel-LA-to")]],
+        ["换乘",[v("cambiare treno","change trains","换乘火车","kam-BYAH-reh TREH-no"),v("perdere la coincidenza","miss the connection","错过换乘","PAIR-deh-reh la ko-een-chee-DEN-tsa"),v("il treno sbagliato","wrong train","坐错的火车","eel TREH-no zba-LYA-to")]]
+      ], patterns:["Da quale binario parte?：从哪个站台出发？","Quanto ritardo c'è?：晚点多久？"] },
+      { intro:"入住时要能提供预订信息、证件、入住人数、房型和楼层。", groups:[
+        ["预订信息",[v("la prenotazione","reservation","预订","la preh-no-ta-TSYO-neh"),v("a nome di","under the name","以……姓名","a NO-meh dee"),v("il passaporto","passport","护照","eel pas-sa-POR-to"),v("una notte","one night","一晚","OO-na NOT-teh"),v("due notti","two nights","两晚","DOO-eh NOT-tee")]],
+        ["房间",[v("camera singola","single room","单人间","KA-meh-ra SEEN-go-la"),v("camera doppia","double room","双人间","KA-meh-ra DOP-pya"),v("la chiave","key card","房卡","la KYAH-veh"),v("il piano","floor","楼层","eel PYAH-no")]]
+      ], patterns:["Ho una prenotazione a nome di + 姓名。","La camera è al + 序数词 + piano：房间在几楼。"] },
+      { intro:"用同一套问法确认早餐、网络、电梯、行李寄存和开放时间。", groups:[
+        ["酒店设施",[v("la colazione","breakfast","早餐","la ko-la-TSYO-neh"),v("il Wi-Fi","Wi-Fi","无线网络","eel WAI-fai"),v("l'ascensore","lift","电梯","la-shen-SO-reh"),v("il deposito bagagli","luggage storage","行李寄存","eel deh-PO-zee-to ba-GAL-yee"),v("la reception","reception","前台","la reh-sep-SYON"),v("la piscina","pool","游泳池","la pee-SHEE-na")]],
+        ["是否包含",[v("incluso","included","包含","een-KLOO-zo"),v("gratuito","free","免费","gra-TOO-ee-to"),v("aperto","open","开放","a-PAIR-to"),v("chiuso","closed","关闭","KYOO-zo")]]
+      ], patterns:["C'è + 设施？表示“有……吗？”。","A che ora apre / chiude?：几点开放 / 关闭？"] },
+      { intro:"报告问题时，用物品加 non funziona，或用房间加形容词。", groups:[
+        ["故障物品",[v("l'acqua calda","hot water","热水","LAK-kwa KAL-da"),v("l'aria condizionata","air conditioning","空调","LA-rya kon-dee-tsyo-NA-ta"),v("la luce","light","灯","la LOO-cheh"),v("la doccia","shower","淋浴","la DO-cha"),v("la serratura","lock","门锁","la sair-ra-TOO-ra")]],
+        ["问题描述",[v("non funziona","doesn't work","坏了","non foon-TSYO-na"),v("troppo rumorosa","too noisy","太吵","TROP-po roo-mo-RO-za"),v("sporca","dirty","不干净","SPOR-ka"),v("fredda","cold","冷","FRED-da"),v("rotta","broken","损坏","ROT-ta")]]
+      ], patterns:["La luce non funziona：灯坏了。","La camera è troppo + 形容词：房间太……。"] },
+      { intro:"退房时要能处理结算、收据、行李寄存和晚些回来取。", groups:[
+        ["退房动作",[v("fare il check-out","check out","退房","FA-reh eel chek-out"),v("lasciare i bagagli","leave luggage","寄存行李","la-SHA-reh ee ba-GAL-yee"),v("ritirare i bagagli","collect luggage","领取行李","ree-tee-RA-reh ee ba-GAL-yee"),v("la ricevuta","receipt","收据","la ree-cheh-VOO-ta")]],
+        ["时间范围",[v("fino alle cinque","until five","直到5点","FEE-no AL-leh CHEEN-kweh"),v("più tardi","later","晚些时候","pyoo TAR-dee"),v("stasera","this evening","今晚","sta-SEH-ra")]]
+      ], patterns:["Posso lasciare + 物品 + fino alle + 时间？","Vorrei la ricevuta：我想要收据。"] },
+      { intro:"咖啡馆不只会说 caffè，还要会选择饮品、食物、数量和堂食外带。", groups:[
+        ["饮品",[v("un caffè","espresso","一杯浓缩咖啡","oon kaf-FEH"),v("un cappuccino","cappuccino","一杯卡布奇诺","oon kap-poo-CHEE-no"),v("un latte macchiato","latte macchiato","一杯拿铁玛奇朵","oon LAT-teh mak-KYA-to"),v("un tè","tea","一杯茶","oon teh"),v("acqua naturale","still water","不含气的水","AK-kwa na-too-RA-leh"),v("acqua frizzante","sparkling water","气泡水","AK-kwa freet-TSAN-teh")]],
+        ["食物与选择",[v("un cornetto","croissant","一个牛角包","oon kor-NET-to"),v("un panino","sandwich","一个三明治","oon pa-NEE-no"),v("senza zucchero","without sugar","不要糖","SEN-tsa DZOO-keh-ro"),v("qui","for here","堂食","kwee"),v("da portare via","to take away","外带","da por-TA-reh VEE-a")]]
+      ], patterns:["Vorrei un / una + 食物或饮品。","两个用 due：due caffè、due cornetti。"] },
+      { intro:"入座要能说明人数、预订、室内室外、等位和座位需求。", groups:[
+        ["人数与座位",[v("siamo in due","there are two of us","我们两位","SYAH-mo een DOO-eh"),v("siamo in tre","there are three of us","我们三位","SYAH-mo een treh"),v("un tavolo","a table","一张桌子","oon TA-vo-lo"),v("dentro","inside","室内","DEN-tro"),v("fuori","outside","室外","FWO-ree"),v("vicino alla finestra","near the window","靠窗","vee-CHEE-no AL-la fee-NEH-stra")]],
+        ["等位",[v("libero","available","空闲的","LEE-beh-ro"),v("occupato","occupied","有人使用","ok-koo-PA-to"),v("aspettare","to wait","等待","as-pet-TA-reh"),v("dieci minuti","ten minutes","10分钟","DYEH-chee mee-NOO-tee")]]
+      ], patterns:["C'è un tavolo per + 人数？","Quanto bisogna aspettare?：需要等多久？"] },
+      { intro:"看菜单要知道餐序、菜类、口味和推荐，才能替换着问。", groups:[
+        ["餐序",[v("l'antipasto","starter","前菜","lan-tee-PAS-to"),v("il primo","first course","第一道主食","eel PREE-mo"),v("il secondo","main course","主菜","eel seh-KON-do"),v("il contorno","side dish","配菜","eel kon-TOR-no"),v("il dolce","dessert","甜点","eel DOL-cheh")]],
+        ["菜类与口味",[v("la pasta","pasta","意面","la PAS-ta"),v("il pesce","fish","鱼","eel PEH-sheh"),v("la carne","meat","肉","la KAR-neh"),v("le verdure","vegetables","蔬菜","leh vair-DOO-reh"),v("piccante","spicy","辣","peek-KAN-teh"),v("tipico","typical","当地特色的","TEE-pee-ko")]]
+      ], patterns:["Qual è il piatto tipico?：当地特色菜是什么？","Che cosa contiene?：里面有什么？"] },
+      { intro:"正式点餐要会数量、餐序、饮料、加点和结束点单。", groups:[
+        ["点单动作",[v("prendo","I'll have","我要","PREN-do"),v("vorrei","I'd like","我想要","vor-REH-ee"),v("per me","for me","我要的是","pair meh"),v("ancora","another / more","再来一些","an-KO-ra"),v("basta così","that's all","就这些","BAS-ta ko-SEE")]],
+        ["数量",[v("un piatto","one dish","一份菜","oon PYAT-to"),v("una porzione","one portion","一份","OO-na por-TSYO-neh"),v("mezzo litro","half a litre","半升","MET-tso LEE-tro"),v("un altro","another one","再来一个","oon AL-tro")]]
+      ], patterns:["Per me + 菜名：我要……。","Ancora + 数量 + 名词：再来……。"] },
+      { intro:"饮食限制要覆盖常见过敏原、饮食选择和 senza 组合。", groups:[
+        ["常见限制",[v("vegetariano","vegetarian","素食者，男性说法","veh-jeh-ta-RYA-no"),v("vegetariana","vegetarian","素食者，女性说法","veh-jeh-ta-RYA-na"),v("vegano","vegan","纯素，男性说法","veh-GA-no"),v("senza glutine","gluten-free","无麸质","SEN-tsa GLOO-tee-neh"),v("senza lattosio","lactose-free","无乳糖","SEN-tsa lat-TO-zyo")]],
+        ["过敏原",[v("le noci","nuts","坚果","leh NO-chee"),v("il latte","milk","牛奶","eel LAT-teh"),v("le uova","eggs","鸡蛋","leh WOH-va"),v("il pesce","fish","鱼","eel PEH-sheh"),v("i crostacei","shellfish","甲壳类海鲜","ee kros-ta-CHEH-ee"),v("il formaggio","cheese","奶酪","eel for-MAD-jo")]]
+      ], patterns:["Sono allergico / allergica a + 食物：我对……过敏。","Senza + 食材, per favore：请不要……。"] },
+      { intro:"结账要会卡、现金、分开付、服务费、收据和账单错误。", groups:[
+        ["付款方式",[v("la carta","card","银行卡","la KAR-ta"),v("i contanti","cash","现金","ee kon-TAN-tee"),v("contactless","contactless","非接触支付","kon-TAKT-les"),v("insieme","together","一起付","een-SYEH-meh"),v("separatamente","separately","分开付","seh-pa-ra-ta-MEN-teh")]],
+        ["账单",[v("il conto","bill","账单","eel KON-to"),v("il servizio","service charge","服务费","eel sair-VEE-tsyo"),v("la mancia","tip","小费","la MAN-cha"),v("la ricevuta","receipt","收据","la ree-cheh-VOO-ta"),v("un errore","a mistake","错误","oon air-RO-reh")]]
+      ], patterns:["Posso pagare con + carta / contanti？","Possiamo pagare separatamente?：可以分开付吗？"] },
+      { intro:"购物需要能替换商品、颜色、尺码、材质和付款方式。", groups:[
+        ["尺码",[v("piccolo","small","小号","PEEK-ko-lo"),v("medio","medium","中号","MEH-dyo"),v("grande","large","大号","GRAN-deh"),v("una taglia in più","one size larger","大一码","OO-na TA-lya een pyoo"),v("una taglia in meno","one size smaller","小一码","OO-na TA-lya een MEH-no")]],
+        ["颜色与材质",[v("nero","black","黑色","NEH-ro"),v("bianco","white","白色","BYAN-ko"),v("rosso","red","红色","ROS-so"),v("blu","blue","蓝色","bloo"),v("verde","green","绿色","VAIR-deh"),v("di cotone","cotton","棉质","dee ko-TO-neh"),v("di pelle","leather","皮质","dee PEL-leh")]],
+        ["购物动作",[v("provare","try on","试穿","pro-VA-reh"),v("il camerino","fitting room","试衣间","eel ka-meh-REE-no"),v("lo prendo","I'll take it","我要了","lo PREN-do"),v("troppo caro","too expensive","太贵","TROP-po KA-ro")]]
+      ], patterns:["Avete questo in + 颜色 / 尺码？","Posso provarlo / provarla？根据商品性别选择词尾。"] },
+      { intro:"景点购票要组合票种、人数、时段、入口、语音导览和开放时间。", groups:[
+        ["票种",[v("intero","full price","全价票","een-TEH-ro"),v("ridotto","reduced","优惠票","ree-DOT-to"),v("gratuito","free","免费票","gra-TOO-ee-to"),v("l'audioguida","audio guide","语音导览","low-dyo-GWEE-da"),v("la visita guidata","guided tour","导览团","la VEE-zee-ta gwee-DA-ta")]],
+        ["入场",[v("l'ingresso","entrance","入口","leen-GRES-so"),v("l'uscita","exit","出口","LOO-shee-ta"),v("la prenotazione","reservation","预约","la preh-no-ta-TSYO-neh"),v("il primo orario","first time slot","最早时段","eel PREE-mo oh-RA-ryo"),v("l'ultimo ingresso","last entry","最晚入场","LOOL-tee-mo een-GRES-so")]]
+      ], patterns:["Un biglietto intero e uno ridotto。","Qual è il primo orario disponibile?：最早可用时段是什么？"] },
+      { intro:"参观时要会拍照限制、闪光灯、导览开始点和参观时长。", groups:[
+        ["拍照",[v("fare una foto","take a photo","拍照","FA-reh OO-na FO-to"),v("senza flash","without flash","不用闪光灯","SEN-tsa flash"),v("il treppiede","tripod","三脚架","eel trep-PYEH-deh"),v("un'altra foto","another photo","再拍一张","oo-NAL-tra FO-to")]],
+        ["参观",[v("la visita","visit / tour","参观","la VEE-zee-ta"),v("iniziare","to start","开始","ee-nee-TSYA-reh"),v("durare","to last","持续","doo-RA-reh"),v("circa un'ora","about an hour","大约一小时","CHEER-ka oo-NO-ra")]]
+      ], patterns:["Si possono fare foto?：可以拍照吗？","Quanto dura + la visita？：参观持续多久？"] },
+      { intro:"药店要会身体部位、症状、持续时间和常见药品形式。", groups:[
+        ["症状",[v("mal di testa","headache","头痛","mal dee TES-ta"),v("mal di stomaco","stomach ache","胃痛","mal dee STO-ma-ko"),v("la febbre","fever","发烧","la FEB-breh"),v("il raffreddore","cold","感冒","eel raf-fred-DO-reh"),v("la tosse","cough","咳嗽","la TOS-seh"),v("la nausea","nausea","恶心","la NAW-zeh-a")]],
+        ["药品与时间",[v("una medicina","medicine","药","OO-na meh-dee-CHEE-na"),v("le compresse","tablets","药片","leh kom-PRES-seh"),v("una crema","cream","药膏","OO-na KREH-ma"),v("da ieri","since yesterday","从昨天开始","da YEH-ree"),v("da due giorni","for two days","两天了","da DOO-eh JOR-nee")]]
+      ], patterns:["Ho mal di + 身体部位：我……痛。","Avete qualcosa per + 症状？：有治疗……的药吗？"] },
+      { intro:"紧急时先说需要什么，再说明位置、遗失物和人员情况。", groups:[
+        ["紧急机构",[v("la polizia","police","警察","la po-lee-TSYA"),v("l'ambulanza","ambulance","救护车","lam-boo-LAN-tsa"),v("il pronto soccorso","emergency room","急诊室","eel PRON-to sok-KOR-so"),v("il medico","doctor","医生","eel MEH-dee-ko")]],
+        ["关键情况",[v("rubato","stolen","被偷了","roo-BA-to"),v("perso","lost","丢失了","PAIR-so"),v("ferito","injured","受伤","feh-REE-to"),v("vicino alla stazione","near the station","在车站附近","vee-CHEE-no AL-la sta-TSYO-neh"),v("non so dove sono","I don't know where I am","我不知道自己在哪里","non soh DO-veh SO-no")]]
+      ], patterns:["Mi hanno rubato + 物品：我的……被偷了。","Ho perso + 物品：我丢了……。","Sono vicino a + 地点：我在……附近。"] },
+      { intro:"把机场到酒店所需零件串起来：交通工具、车票、方向和入住。", groups:[
+        ["全流程替换",[v("l'aeroporto","airport","机场","la-eh-ro-POR-to"),v("la stazione","station","车站","la sta-TSYO-neh"),v("il centro","city centre","市中心","eel CHEN-tro"),v("l'hotel","hotel","酒店","lo-TEL"),v("un biglietto","one ticket","一张票","oon bee-LYET-to"),v("due biglietti","two tickets","两张票","DOO-eh bee-LYET-tee")]]
+      ], patterns:["Dall'aeroporto al centro：从机场到市中心。","Questo treno / autobus va a + 地点？"] },
+      { intro:"酒店模拟用四组零件：预订、设施、故障和退房。", groups:[
+        ["酒店总复习",[v("prenotazione","reservation","预订","preh-no-ta-TSYO-neh"),v("colazione","breakfast","早餐","ko-la-TSYO-neh"),v("Wi-Fi","Wi-Fi","无线网络","WAI-fai"),v("acqua calda","hot water","热水","AK-kwa KAL-da"),v("deposito bagagli","luggage storage","行李寄存","deh-PO-zee-to ba-GAL-yee"),v("ricevuta","receipt","收据","ree-cheh-VOO-ta")]]
+      ], patterns:["先入住，再问设施；发现问题后说明故障，最后退房寄存。"] },
+      { intro:"餐厅模拟按真实顺序复习：入座、菜单、点餐、忌口和结账。", groups:[
+        ["餐厅总复习",[v("un tavolo","a table","桌位","oon TA-vo-lo"),v("il menù","menu","菜单","eel meh-NOO"),v("il piatto tipico","typical dish","特色菜","eel PYAT-to TEE-pee-ko"),v("senza formaggio","without cheese","不要奶酪","SEN-tsa for-MAD-jo"),v("il conto","bill","账单","eel KON-to"),v("la carta","card","银行卡","la KAR-ta")]]
+      ], patterns:["Siamo in + 人数；Per me + 菜；Senza + 食材；Il conto, per favore。"] },
+      { intro:"城市一日游把方向、交通、门票、拍照和购物自由串联。", groups:[
+        ["城市任务",[v("a destra","right","右边","a DES-tra"),v("a sinistra","left","左边","a see-NEES-tra"),v("la fermata","stop","车站","la fer-MA-ta"),v("l'ingresso","entrance","入口","leen-GRES-so"),v("fare foto","take photos","拍照","FA-reh FO-to"),v("quanto costa","how much","多少钱","KWAN-to KOS-ta")]]
+      ], patterns:["每到新场景先说 Scusi，再使用该场景的第一句。"] },
+      { intro:"落地前只复习高频替换槽，不再增加新词。", groups:[
+        ["六个万能槽",[v("dove","where","哪里","DO-veh"),v("quando","when","什么时候","KWAN-do"),v("quanto","how much / long","多少、多久","KWAN-to"),v("un biglietto","one ticket","一张票","oon bee-LYET-to"),v("una prenotazione","a reservation","一个预订","OO-na preh-no-ta-TSYO-neh"),v("per favore","please","请","pair fa-VOH-reh")]]
+      ], patterns:["Dove + 地点；A che ora + 动作；Quanto + 价格或时间。"] },
+      { intro:"最后一天只保留能解决任务的高频词块，忘记时直接播放或展示。", groups:[
+        ["落地随身词块",[v("Buongiorno","Hello","您好","bwon-JOR-no"),v("Scusi","Excuse me","劳驾","SKOO-zee"),v("Non capisco","I don't understand","我没听懂","non ka-PEES-ko"),v("Dov'è","Where is","在哪里","do-VEH"),v("Quanto costa","How much","多少钱","KWAN-to KOS-ta"),v("Ho bisogno di aiuto","I need help","我需要帮助","oh bee-ZON-nyo dee a-YOO-to"),v("Grazie mille","Thank you very much","非常感谢","GRAHT-tsyeh MEEL-leh")]]
+      ], patterns:["礼貌开口 + 核心需求 + per favore。听不懂就展示手机上的文字。"] }
+    ];
+
     lessons.forEach((lesson, index) => {
       const expansion = lessonExpansions[index];
       lesson.phrases.push(...expansion.phrases);
       lesson.dialogue.push(...expansion.dialogue);
       lesson.dialogue.push(...dialogueContinuations[index]);
     });
+
+    lessons[2].phrases = [
+      p("Che ore sono?","/ke ˈore ˈsono/","What time is it?","现在几点？","keh OH-reh SO-no"),
+      p("A che ora parte?","/a ke ˈora ˈparte/","What time does it leave?","几点出发？","a keh OH-ra PAR-teh"),
+      p("A che ora arriva?","/a ke ˈora arˈriva/","What time does it arrive?","几点到达？","a keh OH-ra ar-REE-va"),
+      p("Alle nove e mezza.","/alle ˈnɔve e ˈmɛddza/","At nine thirty.","九点半。","AL-leh NO-veh eh MET-tsa"),
+      p("Oggi o domani?","/ˈɔddʒi o doˈmani/","Today or tomorrow?","今天还是明天？","OD-jee oh do-MA-nee"),
+      p("Quanto manca?","/ˈkwanto ˈmanka/","How long is left?","还要多久？","KWAN-to MAN-ka"),
+      p("È in orario?","/ɛ in oˈrarjo/","Is it on time?","准点吗？","eh een oh-RAH-ryo"),
+      p("È in ritardo.","/ɛ in riˈtardo/","It is delayed.","晚点了。","eh een ree-TAR-do")
+    ];
+    lessons[2].dialogue = [
+      ["你","Scusi, a che ora parte il treno per Firenze?","不好意思，去佛罗伦萨的火车几点出发？"],
+      ["工作人员","Alle nove e mezza.","九点半。"],
+      ["你","Oggi o domani?","今天还是明天？"],
+      ["工作人员","Oggi.","今天。"],
+      ["你","È in orario?","准点吗？"],
+      ["工作人员","No, è in ritardo.","不，晚点了。"],
+      ["你","Quanto manca?","还要多久？"],
+      ["工作人员","Mancano dieci minuti.","还有10分钟。"],
+      ["你","A che ora arriva?","几点到达？"],
+      ["工作人员","Alle undici e venti.","11点20分。"]
+    ];
 
     const emergency = [
       p("Parla inglese?","/ˈparla iŋˈɡleze/","Do you speak English?","您会说英语吗？",""),
@@ -1155,16 +1319,36 @@
       $("dailyMedia").innerHTML = card(media.teach, "当天讲解视频", "teach") + card(media.listen, "磨耳朵", "listen");
     }
 
+    function renderToolkit() {
+      const toolkit = lessonToolkits[currentDay];
+      $("toolkitIntro").textContent = toolkit.intro;
+      $("toolkitGroups").innerHTML = toolkit.groups.map(([name, items]) => `<section class="toolkit-group">
+        <h3>${escapeHtml(name)}</h3>
+        <div class="toolkit-grid">${items.map(item => `<article class="toolkit-item">
+          <div>
+            <p class="toolkit-it" lang="it">${escapeHtml(item.it)}</p>
+            <p class="toolkit-en">${escapeHtml(item.en)}</p>
+            <p class="toolkit-zh">${escapeHtml(item.zh)}</p>
+            <p class="toolkit-read">读音：${escapeHtml(item.read)}</p>
+          </div>
+          <button class="toolkit-play" data-speak="${escapeHtml(item.it)}">播放</button>
+        </article>`).join("")}</div>
+      </section>`).join("");
+      $("toolkitPatterns").innerHTML = toolkit.patterns.map(pattern => `<div class="toolkit-pattern">${escapeHtml(pattern)}</div>`).join("");
+    }
+
     function renderLesson() {
       speechRun++;
       if ("speechSynthesis" in window) speechSynthesis.cancel();
       const lesson = lessons[currentDay];
+      const toolkitCount = lessonToolkits[currentDay].groups.reduce((total, group) => total + group[1].length, 0);
       $("dayChip").textContent = `第 ${currentDay + 1} 天`;
-      $("lessonLabel").textContent = `第 ${currentDay + 1} 课｜8 个核心句｜${lesson.dialogue.length} 轮对话`;
+      $("lessonLabel").textContent = `第 ${currentDay + 1} 课｜8 句｜${toolkitCount} 词块｜${lesson.dialogue.length} 轮对话`;
       $("lessonTitle").textContent = lesson.title;
       $("lessonGoal").textContent = lesson.goal;
       $("pronunciation").textContent = lesson.note;
       renderDailyMedia();
+      renderToolkit();
       $("phrases").innerHTML = lesson.phrases.map((item, index) => {
         const key = `${currentDay}-${index}`;
         const known = progress.phrases?.[key];
