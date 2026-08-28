@@ -819,10 +819,44 @@
       }
     ];
 
+    const dialogueContinuations = [
+      [["你","Mi chiamo Li.","我叫李。"],["对方","Piacere.","很高兴认识您。"],["你","Piacere mio.","我也很高兴认识您。"]],
+      [["你","Può cambiare venti euro?","您能找开20欧元吗？"],["售票员","Sì, ecco il resto.","可以，这是找零。"],["你","Grazie.","谢谢。"]],
+      [["你","A che ora arriva?","几点到达？"],["对方","Alle nove e trenta.","9点30分。"],["你","Perfetto, grazie.","好的，谢谢。"]],
+      [["你","Che cosa significa?","这是什么意思？"],["对方","Significa che il treno è in ritardo.","意思是火车晚点了。"],["你","Adesso ho capito.","现在我明白了。"]],
+      [["对方","Vada sempre dritto.","请一直直走。"],["你","Poi a destra?","然后右转吗？"],["对方","Esatto.","对。"]],
+      [["你","È dopo il semaforo?","是在红绿灯之后吗？"],["对方","Sì, prima dell'angolo.","是的，在路口之前。"],["你","Ho capito, grazie.","我明白了，谢谢。"]],
+      [["你","Devo convalidare il biglietto?","我需要打票吗？"],["司机","Sì, qui vicino alla porta.","需要，在门旁边这里。"],["你","Va bene, grazie.","好的，谢谢。"]],
+      [["你","A che ora arriva a Firenze?","几点到佛罗伦萨？"],["售票员","Alle dieci e venti.","10点20分。"],["你","Perfetto.","好的。"]],
+      [["你","Devo cambiare treno?","我需要换乘吗？"],["工作人员","No, è un treno diretto.","不用，这是直达车。"],["你","Grazie mille.","非常感谢。"]],
+      [["前台","Ha bisogno di altro?","您还需要别的吗？"],["你","Qual è la password del Wi-Fi?","Wi-Fi密码是什么？"],["前台","È scritta sulla chiave.","写在房卡上。"]],
+      [["你","C'è un deposito bagagli?","有行李寄存处吗？"],["前台","Sì, vicino alla reception.","有，在前台旁边。"],["你","Perfetto, grazie.","好的，谢谢。"]],
+      [["你","Quando potete sistemarlo?","你们什么时候能修好？"],["前台","Entro dieci minuti.","10分钟之内。"],["你","Va bene, aspetto qui.","好的，我在这里等。"]],
+      [["你","Posso pagare con la carta?","可以刷卡吗？"],["前台","Certamente.","当然可以。"],["你","Posso avere la ricevuta?","可以给我收据吗？"]],
+      [["店员","Sono quattro euro.","一共4欧元。"],["你","Posso pagare con la carta?","可以刷卡吗？"],["店员","Sì, certo.","当然可以。"]],
+      [["服务员","Preferite dentro o fuori?","你们想坐室内还是室外？"],["你","Fuori, per favore.","请安排室外座位。"],["服务员","Seguitemi.","请跟我来。"]],
+      [["你","Questo piatto contiene noci?","这道菜含坚果吗？"],["服务员","No, non contiene noci.","不，不含坚果。"],["你","Allora vorrei questo.","那我想要这个。"]],
+      [["服务员","Come antipasto?","前菜需要什么？"],["你","Questo, per favore.","请给我这个。"],["服务员","E da bere?","饮料需要什么？"]],
+      [["服务员","Ha altre intolleranze?","您还有其他食物不耐受吗？"],["你","Sono intollerante al lattosio.","我乳糖不耐受。"],["服务员","Le porto un piatto adatto.","我给您上一道合适的菜。"]],
+      [["服务员","Pagate insieme o separatamente?","一起付还是分开付？"],["你","Separatamente, per favore.","请分开付。"],["服务员","Va bene.","好的。"]],
+      [["店员","Che taglia cerca?","您要什么尺码？"],["你","Una taglia media.","中码。"],["店员","Gliela porto subito.","我马上拿给您。"]],
+      [["售票员","Il prossimo ingresso è alle tre.","下一场入场时间是3点。"],["你","È inclusa l'audioguida?","包含语音导览吗？"],["售票员","Sì, è inclusa.","是的，包含。"]],
+      [["工作人员","Può fare foto, ma senza flash.","可以拍照，但不能使用闪光灯。"],["你","Va bene. Dove inizia la visita?","好的。参观从哪里开始？"],["工作人员","Inizia qui.","从这里开始。"]],
+      [["药剂师","Ha anche la febbre?","您还发烧吗？"],["你","Sì, da ieri.","是的，从昨天开始。"],["药剂师","Le do qualcosa per la febbre.","我给您拿一些退烧药。"]],
+      [["接线员","Dove si trova?","您在哪里？"],["你","Sono vicino alla stazione.","我在车站附近。"],["接线员","Rimanga lì, arriviamo subito.","请留在那里，我们马上到。"]],
+      [["司机","Qual è il nome dell'hotel?","酒店叫什么名字？"],["你","Hotel Roma, in centro.","罗马酒店，在市中心。"],["司机","Arriviamo tra venti minuti.","我们20分钟后到。"]],
+      [["前台","A che nome è la prenotazione?","预订姓名是什么？"],["你","A nome di Li.","姓李。"],["前台","Il passaporto, per favore.","请出示护照。"]],
+      [["服务员","Desiderate un dolce?","需要甜点吗？"],["你","No, grazie. Solo il conto.","不用，谢谢。只需要账单。"],["服务员","Arriva subito.","马上送来。"]],
+      [["你","Dov'è la fermata per tornare in hotel?","返回酒店的车站在哪里？"],["工作人员","Davanti al museo.","在博物馆前面。"],["你","Grazie, buona giornata.","谢谢，祝您今天愉快。"]],
+      [["对方","Dove vuole andare?","您想去哪里？"],["你","A Firenze, per favore.","去佛罗伦萨，谢谢。"],["对方","Il treno parte dal binario cinque.","火车从5号站台出发。"]],
+      [["司机","Dove va?","您去哪里？"],["你","In questo hotel, per favore.","请去这家酒店。"],["司机","Va bene, partiamo.","好的，我们出发。"]]
+    ];
+
     lessons.forEach((lesson, index) => {
       const expansion = lessonExpansions[index];
       lesson.phrases.push(...expansion.phrases);
       lesson.dialogue.push(...expansion.dialogue);
+      lesson.dialogue.push(...dialogueContinuations[index]);
     });
 
     const emergency = [
@@ -1126,7 +1160,7 @@
       if ("speechSynthesis" in window) speechSynthesis.cancel();
       const lesson = lessons[currentDay];
       $("dayChip").textContent = `第 ${currentDay + 1} 天`;
-      $("lessonLabel").textContent = `第 ${currentDay + 1} 课｜8 个核心句｜5 轮对话`;
+      $("lessonLabel").textContent = `第 ${currentDay + 1} 课｜8 个核心句｜${lesson.dialogue.length} 轮对话`;
       $("lessonTitle").textContent = lesson.title;
       $("lessonGoal").textContent = lesson.goal;
       $("pronunciation").textContent = lesson.note;
