@@ -576,6 +576,255 @@
       ], dialogue:[["你","Buongiorno. Scusi, parla inglese?","您好。不好意思，您会说英语吗？"],["你","Non capisco. Può mostrarmelo?","我没听懂。您能指给我看吗？"],["你","Grazie mille.","非常感谢。"]]}
     ];
 
+    const lessonExpansions = [
+      {
+        phrases:[
+          p("Mi chiamo Li.","/mi ˈkjamo li/","My name is Li.","我叫李。","mee KYAH-mo lee"),
+          p("Grazie mille.","/ˈɡrattsje ˈmille/","Thank you very much.","非常感谢。","GRAHT-tsyeh MEEL-leh"),
+          p("Va bene.","/va ˈbɛne/","All right.","好的。","va BEH-neh")
+        ],
+        dialogue:[["对方","Certamente. Come posso aiutarla?","当然。我能怎么帮助您？"],["你","Grazie mille.","非常感谢。"]]
+      },
+      {
+        phrases:[
+          p("Cinque euro.","/ˈtʃiŋkwe ˈɛuro/","Five euros.","5欧元。","CHEEN-kweh EH-oo-ro"),
+          p("Dieci euro.","/ˈdjɛtʃi ˈɛuro/","Ten euros.","10欧元。","DYEH-chee EH-oo-ro"),
+          p("Può cambiare cinquanta euro?","/pwɔ kamˈbjare tʃiŋˈkwanta ˈɛuro/","Can you change fifty euros?","您能找开50欧元吗？","pwoh kam-BYAH-reh cheen-KWAN-ta EH-oo-ro")
+        ],
+        dialogue:[["售票员","Sono dieci euro.","一共10欧元。"],["你","Ecco venti euro.","给您20欧元。"]]
+      },
+      {
+        phrases:[
+          p("È presto?","/ɛ ˈprɛsto/","Is it early?","时间还早吗？","eh PRES-to"),
+          p("È tardi?","/ɛ ˈtardi/","Is it late?","晚了吗？","eh TAR-dee"),
+          p("Quanto manca?","/ˈkwanto ˈmanka/","How long is left?","还要多久？","KWAN-to MAN-ka")
+        ],
+        dialogue:[["对方","Mancano dieci minuti.","还有10分钟。"],["你","Va bene, grazie.","好的，谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Non ho capito.","/non o kaˈpito/","I didn't understand.","我刚才没听懂。","non oh ka-PEE-to"),
+          p("Può dirlo di nuovo?","/pwɔ ˈdirlo di ˈnwɔvo/","Could you say it again?","您能再说一次吗？","pwoh DEER-lo dee NWOH-vo"),
+          p("Che cosa significa?","/ke ˈkɔza siɲˈɲifika/","What does it mean?","这是什么意思？","keh KO-za seen-YEE-fee-ka")
+        ],
+        dialogue:[["对方","Certo, lo scrivo qui.","当然，我写在这里。"],["你","Grazie, adesso ho capito.","谢谢，现在我明白了。"]]
+      },
+      {
+        phrases:[
+          p("Può indicarmelo sulla mappa?","/pwɔ indiˈkarmelo ˈsulla ˈmappa/","Could you point it out on the map?","您能在地图上指给我看吗？","pwoh een-dee-KAR-meh-lo SOOL-la MAP-pa"),
+          p("Da che parte?","/da ke ˈparte/","Which way?","往哪边？","da keh PAR-teh"),
+          p("Quanto tempo ci vuole?","/ˈkwanto ˈtɛmpo tʃi ˈvwɔle/","How long does it take?","需要多长时间？","KWAN-to TEM-po chee VWOH-leh")
+        ],
+        dialogue:[["对方","È a dieci minuti a piedi.","步行10分钟。"],["你","Può indicarmelo sulla mappa?","您能在地图上指给我看吗？"]]
+      },
+      {
+        phrases:[
+          p("Attraversi la strada.","/attraverˈsi la ˈstrada/","Cross the street.","穿过马路。","at-tra-ver-SEE la STRA-da"),
+          p("È dopo il semaforo?","/ɛ ˈdopo il seˈmaforo/","Is it after the traffic light?","是在红绿灯之后吗？","eh DO-po eel seh-MA-fo-ro"),
+          p("È prima dell'angolo?","/ɛ ˈprima delˈlaŋɡolo/","Is it before the corner?","是在路口之前吗？","eh PREE-ma del-LAN-go-lo")
+        ],
+        dialogue:[["对方","Sì, poi giri a sinistra.","是的，然后左转。"],["你","Grazie mille.","非常感谢。"]]
+      },
+      {
+        phrases:[
+          p("Dove compro il biglietto?","/ˈdove ˈkompro il biʎˈʎetto/","Where do I buy the ticket?","我在哪里买票？","DO-veh KOM-pro eel bee-LYET-to"),
+          p("Devo convalidarlo?","/ˈdɛvo konvaliˈdarlo/","Do I need to validate it?","我需要打票吗？","DEH-vo kon-va-lee-DAR-lo"),
+          p("Questa è la fermata giusta?","/ˈkwesta ɛ la ferˈmata ˈdʒusta/","Is this the right stop?","这是正确的车站吗？","KWES-ta eh la fer-MA-ta JOOS-ta")
+        ],
+        dialogue:[["司机","Sì, scenda alla prossima.","是的，在下一站下车。"],["你","Mi avvisa, per favore?","到站请提醒我，可以吗？"]]
+      },
+      {
+        phrases:[
+          p("C'è un treno diretto?","/tʃɛ un ˈtrɛno diˈrɛtto/","Is there a direct train?","有直达火车吗？","cheh oon TREH-no dee-RET-to"),
+          p("A che ora arriva?","/a ke ˈora arˈriva/","What time does it arrive?","几点到达？","a keh OH-ra ar-REE-va"),
+          p("Posso scegliere il posto?","/ˈpɔsso ˈʃeʎʎere il ˈposto/","Can I choose the seat?","我可以选座位吗？","POS-so SHEL-yeh-reh eel POS-to")
+        ],
+        dialogue:[["售票员","Sì, c'è un diretto alle otto.","有，8点有一班直达车。"],["你","Posso scegliere il posto?","我可以选座位吗？"]]
+      },
+      {
+        phrases:[
+          p("Dove sono le partenze?","/ˈdove ˈsono le parˈtɛntse/","Where are the departures?","出发区在哪里？","DO-veh SO-no leh par-TEN-tseh"),
+          p("Devo cambiare treno?","/ˈdɛvo kamˈbjare ˈtrɛno/","Do I need to change trains?","我需要换乘吗？","DEH-vo kam-BYAH-reh TREH-no"),
+          p("Quanto dura il viaggio?","/ˈkwanto ˈdura il ˈvjaddʒo/","How long is the journey?","行程需要多久？","KWAN-to DOO-ra eel VYAD-jo")
+        ],
+        dialogue:[["工作人员","No, è in ritardo di dieci minuti.","不，列车晚点10分钟。"],["你","Va bene, grazie.","好的，谢谢。"]]
+      },
+      {
+        phrases:[
+          p("A che piano è la camera?","/a ke ˈpjano ɛ la ˈkamera/","What floor is the room on?","房间在几楼？","a keh PYAH-no eh la KA-meh-ra"),
+          p("Posso avere la chiave?","/ˈpɔsso aˈvere la ˈkjave/","May I have the key?","可以给我房卡吗？","POS-so a-VEH-reh la KYAH-veh"),
+          p("Dov'è la reception?","/doˈvɛ la resepˈʃon/","Where is reception?","前台在哪里？","do-VEH la reh-sep-SYON")
+        ],
+        dialogue:[["前台","La camera è al secondo piano.","房间在二楼。"],["你","Dov'è l'ascensore?","电梯在哪里？"]]
+      },
+      {
+        phrases:[
+          p("Qual è la password del Wi-Fi?","/kwal ɛ la ˈpassword del ˈwaifai/","What is the Wi-Fi password?","Wi-Fi密码是什么？","kwal eh la PASS-word del WAI-fai"),
+          p("C'è un deposito bagagli?","/tʃɛ un deˈpɔzito baˈɡaʎʎi/","Is there luggage storage?","有行李寄存处吗？","cheh oon deh-PO-zee-to ba-GAL-yee"),
+          p("Posso avere un'altra chiave?","/ˈpɔsso aˈvere unˈaltra ˈkjave/","May I have another key?","可以再给我一张房卡吗？","POS-so a-VEH-reh oo-NAL-tra KYAH-veh")
+        ],
+        dialogue:[["前台","La password è scritta sulla chiave.","密码写在房卡上。"],["你","Perfetto, grazie.","好的，谢谢。"]]
+      },
+      {
+        phrases:[
+          p("La luce non funziona.","/la ˈlutʃe non funˈtsjona/","The light doesn't work.","灯坏了。","la LOO-cheh non foon-TSYO-na"),
+          p("Il bagno è sporco.","/il ˈbaɲɲo ɛ ˈsporko/","The bathroom is dirty.","卫生间不干净。","eel BAN-nyo eh SPOR-ko"),
+          p("Quando potete sistemarlo?","/ˈkwando poˈtete sisteˈmarlo/","When can you fix it?","你们什么时候能修好？","KWAN-do po-TEH-teh see-steh-MAR-lo")
+        ],
+        dialogue:[["前台","Mandiamo subito qualcuno.","我们马上派人过去。"],["你","Grazie, aspetto in camera.","谢谢，我在房间等。"]]
+      },
+      {
+        phrases:[
+          p("Posso pagare con la carta?","/ˈpɔsso paˈɡare kon la ˈkarta/","Can I pay by card?","可以刷卡吗？","POS-so pa-GA-reh kon la KAR-ta"),
+          p("A che ora devo tornare?","/a ke ˈora ˈdɛvo torˈnare/","What time should I return?","我几点回来取？","a keh OH-ra DEH-vo tor-NA-reh"),
+          p("Dov'è il deposito bagagli?","/doˈvɛ il deˈpɔzito baˈɡaʎʎi/","Where is the luggage storage?","行李寄存处在哪里？","do-VEH eel deh-PO-zee-to ba-GAL-yee")
+        ],
+        dialogue:[["前台","Sì, può lasciarli fino alle cinque.","可以，您可以寄存到5点。"],["你","Perfetto, grazie.","好的，谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Qui, per favore.","/kwi per faˈvore/","For here, please.","在这里喝，谢谢。","kwee pair fa-VOH-reh"),
+          p("Senza zucchero.","/ˈsɛntsa ˈdzukkero/","Without sugar.","不要糖。","SEN-tsa DZOO-keh-ro"),
+          p("Posso pagare qui?","/ˈpɔsso paˈɡare kwi/","Can I pay here?","我可以在这里付款吗？","POS-so pa-GA-reh kwee")
+        ],
+        dialogue:[["店员","Altro?","还需要别的吗？"],["你","No, basta così, grazie.","不用了，就这些，谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Possiamo vedere il menù?","/posˈsjamo veˈdere il meˈnu/","May we see the menu?","我们可以看一下菜单吗？","pos-SYAH-mo veh-DEH-reh eel meh-NOO"),
+          p("Dentro, per favore.","/ˈdentro per faˈvore/","Inside, please.","请安排室内座位。","DEN-tro pair fa-VOH-reh"),
+          p("Quanto bisogna aspettare?","/ˈkwanto biˈzoɲɲa aspetˈtare/","How long is the wait?","需要等多久？","KWAN-to bee-ZON-nya as-pet-TA-reh")
+        ],
+        dialogue:[["服务员","Sì, ma bisogna aspettare dieci minuti.","可以，但需要等10分钟。"],["你","Va bene.","好的。"]]
+      },
+      {
+        phrases:[
+          p("C'è qualcosa senza carne?","/tʃɛ kwalˈkɔza ˈsɛntsa ˈkarne/","Is there anything without meat?","有不含肉的菜吗？","cheh kwal-KO-za SEN-tsa KAR-neh"),
+          p("È fatto in casa?","/ɛ ˈfatto in ˈkaza/","Is it homemade?","这是店里自制的吗？","eh FAT-to een KA-za"),
+          p("Vorrei questo.","/vorˈrɛi ˈkwesto/","I'd like this.","我想要这个。","vor-REH-ee KWES-to")
+        ],
+        dialogue:[["服务员","Le consiglio la pasta della casa.","我推荐本店特色意面。"],["你","Allora prendo quella.","那我就要那个。"]]
+      },
+      {
+        phrases:[
+          p("Come antipasto, questo.","/ˈkome antiˈpasto ˈkwesto/","This as a starter.","前菜我要这个。","KO-meh an-tee-PAS-to KWES-to"),
+          p("Per secondo, il pesce.","/per seˈkondo il ˈpeʃʃe/","The fish as the main course.","主菜我要鱼。","pair seh-KON-do eel PEH-sheh"),
+          p("Ancora un po' d'acqua, per favore.","/aŋˈkora un pɔ ˈdakkwa per faˈvore/","A little more water, please.","请再来一点水。","an-KO-ra oon poh DAK-kwa pair fa-VOH-reh")
+        ],
+        dialogue:[["服务员","Desiderate altro?","还需要别的吗？"],["你","No, basta così.","不用了，就这些。"]]
+      },
+      {
+        phrases:[
+          p("Non mangio carne.","/non ˈmandʒo ˈkarne/","I don't eat meat.","我不吃肉。","non MAN-jo KAR-neh"),
+          p("Sono intollerante al lattosio.","/ˈsono intolleˈrante al latˈtɔzjo/","I am lactose intolerant.","我乳糖不耐受。","SO-no een-tol-leh-RAN-teh al lat-TOH-zyo"),
+          p("È senza glutine?","/ɛ ˈsɛntsa ˈɡlutine/","Is it gluten-free?","这是无麸质的吗？","eh SEN-tsa GLOO-tee-neh")
+        ],
+        dialogue:[["服务员","Questo piatto è senza noci.","这道菜不含坚果。"],["你","Perfetto, grazie.","好的，谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Pago io.","/ˈpaɡo ˈio/","I'll pay.","我来付。","PA-go EE-o"),
+          p("Accettate contanti?","/atʃetˈtate konˈtanti/","Do you accept cash?","你们收现金吗？","at-chet-TA-teh kon-TAN-tee"),
+          p("C'è un errore nel conto.","/tʃɛ un erˈrore nel ˈkonto/","There is a mistake on the bill.","账单上有一处错误。","cheh oon er-RO-reh nel KON-to")
+        ],
+        dialogue:[["服务员","Sì, può pagare con la carta.","可以，您可以刷卡。"],["你","Grazie.","谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Cerco una giacca.","/ˈtʃerko ˈuna ˈdʒakka/","I'm looking for a jacket.","我想找一件夹克。","CHER-ko OO-na JAK-ka"),
+          p("Dove sono i camerini?","/ˈdove ˈsono i kameˈrini/","Where are the fitting rooms?","试衣间在哪里？","DO-veh SO-no ee ka-meh-REE-nee"),
+          p("Posso pagare in contanti?","/ˈpɔsso paˈɡare in konˈtanti/","Can I pay in cash?","我可以付现金吗？","POS-so pa-GA-reh een kon-TAN-tee")
+        ],
+        dialogue:[["店员","I camerini sono lì.","试衣间在那里。"],["你","Grazie.","谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Un biglietto intero e uno ridotto.","/un biʎˈʎetto ˈintero e ˈuno riˈdotto/","One full-price and one reduced ticket.","一张全价票和一张优惠票。","oon bee-LYET-to een-TEH-ro eh OO-no ree-DOT-to"),
+          p("È inclusa l'audioguida?","/ɛ inˈkluza laudjoˈɡwida/","Is the audio guide included?","包含语音导览吗？","eh een-KLOO-za low-dyo-GWEE-da"),
+          p("Posso entrare adesso?","/ˈpɔsso enˈtrare aˈdɛsso/","Can I enter now?","我现在可以进去吗？","POS-so en-TRA-reh a-DES-so")
+        ],
+        dialogue:[["售票员","Sì, l'audioguida è inclusa.","是的，包含语音导览。"],["你","Perfetto.","好的。"]]
+      },
+      {
+        phrases:[
+          p("Può scattarne un'altra?","/pwɔ ˈskattarne unˈaltra/","Could you take another one?","您能再拍一张吗？","pwoh SKAT-tar-neh oo-NAL-tra"),
+          p("Dove inizia la visita?","/ˈdove iˈnittsja la ˈvizita/","Where does the tour start?","参观从哪里开始？","DO-veh ee-NEET-tsya la VEE-zee-ta"),
+          p("Posso usare il treppiede?","/ˈpɔsso uˈzare il trepˈpjɛde/","Can I use a tripod?","我可以使用三脚架吗？","POS-so oo-ZA-reh eel trep-PYEH-deh")
+        ],
+        dialogue:[["工作人员","La visita dura circa un'ora.","参观大约持续一小时。"],["你","Grazie.","谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Ho la febbre.","/o la ˈfɛbbre/","I have a fever.","我发烧了。","oh la FEB-breh"),
+          p("Da quanto tempo?","/da ˈkwanto ˈtɛmpo/","For how long?","多久了？","da KWAN-to TEM-po"),
+          p("Avete qualcosa per il raffreddore?","/aˈvete kwalˈkɔza per il raffredˈdore/","Do you have something for a cold?","你们有治疗感冒的药吗？","a-VEH-teh kwal-KO-za pair eel raf-fred-DO-reh")
+        ],
+        dialogue:[["药剂师","Da quanto tempo?","多久了？"],["你","Da ieri.","从昨天开始。"]]
+      },
+      {
+        phrases:[
+          p("Chiamate un'ambulanza!","/kjaˈmate unambuˈlantsa/","Call an ambulance!","请叫救护车！","kya-MA-teh oo-nam-boo-LAN-tsa"),
+          p("Non so dove sono.","/non sɔ ˈdove ˈsono/","I don't know where I am.","我不知道自己在哪里。","non soh DO-veh SO-no"),
+          p("Mi può aiutare?","/mi pwɔ ajuˈtare/","Can you help me?","您能帮助我吗？","mee pwoh a-yoo-TA-reh")
+        ],
+        dialogue:[["对方","L'ambulanza arriva subito.","救护车马上到。"],["你","Grazie.","谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Dove compro i biglietti?","/ˈdove ˈkompro i biʎˈʎetti/","Where do I buy the tickets?","我在哪里买票？","DO-veh KOM-pro ee bee-LYET-tee"),
+          p("Qual è la fermata dell'hotel?","/kwal ɛ la ferˈmata delˈlɔtɛl/","Which stop is for the hotel?","酒店在哪一站下车？","kwal eh la fer-MA-ta del-lo-TEL"),
+          p("Può chiamarmi un taxi?","/pwɔ kjaˈmarmi un ˈtaksi/","Could you call me a taxi?","您能帮我叫一辆出租车吗？","pwoh kya-MAR-mee oon TAK-see")
+        ],
+        dialogue:[["司机","Scenda alla terza fermata.","请在第三站下车。"],["你","Mi avvisa, per favore?","到站请提醒我，可以吗？"]]
+      },
+      {
+        phrases:[
+          p("La camera non è pronta.","/la ˈkamera non ɛ ˈpronta/","The room isn't ready.","房间还没准备好。","la KA-meh-ra non eh PRON-ta"),
+          p("Posso avere un'altra camera?","/ˈpɔsso aˈvere unˈaltra ˈkamera/","May I have another room?","可以给我换一间房吗？","POS-so a-VEH-reh oo-NAL-tra KA-meh-ra"),
+          p("Vorrei fare il check-out.","/vorˈrɛi ˈfare il tʃek aut/","I'd like to check out.","我想退房。","vor-REH-ee FA-reh eel chek-out")
+        ],
+        dialogue:[["前台","Certo, risolviamo subito.","当然，我们马上处理。"],["你","Grazie.","谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Avete un tavolo fuori?","/aˈvete un ˈtavolo ˈfwɔri/","Do you have a table outside?","有室外的桌子吗？","a-VEH-teh oon TA-vo-lo FWO-ree"),
+          p("È senza noci?","/ɛ ˈsɛntsa ˈnɔtʃi/","Is it nut-free?","不含坚果吗？","eh SEN-tsa NO-chee"),
+          p("Posso pagare con la carta?","/ˈpɔsso paˈɡare kon la ˈkarta/","Can I pay by card?","可以刷卡吗？","POS-so pa-GA-reh kon la KAR-ta")
+        ],
+        dialogue:[["服务员","Sì, questo piatto è senza noci.","是的，这道菜不含坚果。"],["你","Perfetto.","好的。"]]
+      },
+      {
+        phrases:[
+          p("Dov'è la fermata?","/doˈvɛ la ferˈmata/","Where is the stop?","车站在哪里？","do-VEH la fer-MA-ta"),
+          p("A che ora chiude?","/a ke ˈora ˈkjude/","What time does it close?","几点关门？","a keh OH-ra KYOO-deh"),
+          p("Vorrei tornare in hotel.","/vorˈrɛi torˈnare in oˈtɛl/","I'd like to return to the hotel.","我想返回酒店。","vor-REH-ee tor-NA-reh een oh-TEL")
+        ],
+        dialogue:[["工作人员","Il museo chiude alle sette.","博物馆7点关门。"],["你","Grazie.","谢谢。"]]
+      },
+      {
+        phrases:[
+          p("Due biglietti per Firenze.","/ˈdue biʎˈʎetti per fiˈrɛntse/","Two tickets to Florence.","两张去佛罗伦萨的票。","DOO-eh bee-LYET-tee pair fee-REN-tseh"),
+          p("Senza formaggio, per favore.","/ˈsɛntsa forˈmaddʒo per faˈvore/","Without cheese, please.","请不要奶酪。","SEN-tsa for-MAD-jo pair fa-VOH-reh"),
+          p("Mi serve un medico.","/mi ˈsɛrve un ˈmɛdiko/","I need a doctor.","我需要医生。","mee SER-veh oon MEH-dee-ko")
+        ],
+        dialogue:[["对方","Certo, parlo più lentamente.","当然，我会说慢一点。"],["你","Grazie mille.","非常感谢。"]]
+      },
+      {
+        phrases:[
+          p("Dov'è il bagno?","/doˈvɛ il ˈbaɲɲo/","Where is the restroom?","卫生间在哪里？","do-VEH eel BAN-nyo"),
+          p("Quanto costa?","/ˈkwanto ˈkɔsta/","How much is it?","多少钱？","KWAN-to KOS-ta"),
+          p("Il conto, per favore.","/il ˈkonto per faˈvore/","The bill, please.","请结账。","eel KON-to pair fa-VOH-reh")
+        ],
+        dialogue:[["对方","Certo, le faccio vedere.","当然，我指给您看。"],["你","Grazie mille.","非常感谢。"]]
+      }
+    ];
+
+    lessons.forEach((lesson, index) => {
+      const expansion = lessonExpansions[index];
+      lesson.phrases.push(...expansion.phrases);
+      lesson.dialogue.push(...expansion.dialogue);
+    });
+
     const emergency = [
       p("Parla inglese?","/ˈparla iŋˈɡleze/","Do you speak English?","您会说英语吗？",""),
       p("Non capisco.","/non kaˈpisko/","I don't understand.","我没听懂。",""),
@@ -877,7 +1126,7 @@
       if ("speechSynthesis" in window) speechSynthesis.cancel();
       const lesson = lessons[currentDay];
       $("dayChip").textContent = `第 ${currentDay + 1} 天`;
-      $("lessonLabel").textContent = `第 ${currentDay + 1} 课`;
+      $("lessonLabel").textContent = `第 ${currentDay + 1} 课｜8 个核心句｜5 轮对话`;
       $("lessonTitle").textContent = lesson.title;
       $("lessonGoal").textContent = lesson.goal;
       $("pronunciation").textContent = lesson.note;
@@ -904,7 +1153,7 @@
         <p class="line-meaning">${escapeHtml(line[2])}</p>
       </div>`).join("");
       $("dialogueStatus").textContent = "逐句播放，角色之间会留出回答时间。";
-      $("practice").innerHTML = lesson.phrases.slice(0, 3).map((item, index) => `<div class="practice-item">
+      $("practice").innerHTML = lesson.phrases.slice(0, 5).map((item, index) => `<div class="practice-item">
         <div>${index + 1}. ${escapeHtml(item.zh)}</div>
         <button class="btn small reveal" data-answer="a-${index}">查看答案</button>
         <p class="answer" id="a-${index}" lang="it">${escapeHtml(item.it)}</p>
