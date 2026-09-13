@@ -289,8 +289,8 @@
           <button class="btn" id="speedBtn">语速：正常</button>
         </div>
         <div class="lesson-media" aria-labelledby="dailyMediaTitle">
-          <h2 id="dailyMediaTitle">今天先看：2 个视频链接</h2>
-          <p class="lesson-media-help">点击下面任意卡片，会打开对应视频。</p>
+          <h2 id="dailyMediaTitle">今天配套：4 个视频入口</h2>
+          <p class="lesson-media-help">同一主题同时给你 B 站中文/双语版和 YouTube 英语版。讲解看一个，磨耳朵再选一个即可。</p>
           <div class="daily-media" id="dailyMedia"></div>
         </div>
       </div>
@@ -1222,6 +1222,45 @@
         listen:["自然意大利语完整对话","B站中意双语听力","https://www.bilibili.com/video/BV1E7Awz8EkA/?p=70"]
       }
     ];
+    const youtubeTopics = [
+      ["Italian greetings for beginners Learn Italian with Lucrezia", "Easy Italian greetings street interview subtitles"],
+      ["Italian numbers prices for beginners Italy Made Easy", "Italian numbers listening practice Easy Italian"],
+      ["Italian time dates days months beginner", "Italian time and date listening practice"],
+      ["Italian please repeat slowly phrases beginner", "Easy Italian beginner conversation subtitles"],
+      ["Italian asking directions travel phrases", "Easy Italian directions street interview subtitles"],
+      ["Italian left right straight directions beginner", "Italian directions listening practice"],
+      ["Italian bus metro travel phrases", "Easy Italian public transport subtitles"],
+      ["Italian train ticket travel phrases", "Italian train station conversation listening"],
+      ["Italian train station platform delay phrases", "Easy Italian train travel subtitles"],
+      ["Italian hotel check in phrases", "Italian hotel check in conversation listening"],
+      ["Italian hotel facilities service phrases", "Italian hotel conversation listening"],
+      ["Italian hotel problems room phrases", "Italian hotel problem conversation listening"],
+      ["Italian hotel check out luggage storage payment", "Italian hotel check out conversation listening"],
+      ["How to order coffee in Italy Learn Italian", "Easy Italian coffee bar subtitles"],
+      ["Italian restaurant table reservation phrases", "Italian restaurant conversation listening"],
+      ["Italian restaurant menu recommendations phrases", "Easy Italian restaurant subtitles"],
+      ["Italian ordering food restaurant phrases", "Italian restaurant ordering listening"],
+      ["Italian food allergies dietary restrictions travel", "Italian dietary restrictions conversation listening"],
+      ["Italian restaurant bill payment phrases", "Italian paying restaurant bill listening"],
+      ["Italian shopping price size phrases", "Easy Italian shopping subtitles"],
+      ["Italian museum tickets booking phrases", "Italian museum ticket conversation listening"],
+      ["Italian ask photo tour phrases", "Easy Italian tourists conversation subtitles"],
+      ["Italian pharmacy illness phrases travel", "Italian pharmacy conversation listening"],
+      ["Italian emergency police lost passport phrases", "Italian emergency help conversation listening"],
+      ["Italian travel phrases airport hotel train restaurant", "Italian travel conversation listening practice"],
+      ["Italian hotel dialogue travel phrases", "Italian hotel full conversation listening"],
+      ["Italian restaurant dialogue travel phrases", "Italian restaurant full conversation listening"],
+      ["Italian city travel directions transport phrases", "Easy Italian city travel subtitles"],
+      ["Italian travel phrases beginner review", "Easy Italian travel phrases subtitles"],
+      ["Italian survival travel phrases final review", "Italian travel listening practice subtitles"]
+    ];
+    const youtubeSearch = query => `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+    dailyMedia.forEach((media, index) => {
+      const [teachQuery, listenQuery] = youtubeTopics[index];
+      media.youtubeTeach = [`${media.teach[0]} - English lesson`, "YouTube · English lesson", youtubeSearch(teachQuery)];
+      media.youtubeListen = [`${media.listen[0]} - Listening`, "YouTube · English subtitles/listening", youtubeSearch(listenQuery)];
+    });
+
     const startDate = new Date("2026-08-26T00:00:00+08:00");
     const travelDate = new Date("2026-09-24T00:00:00+08:00");
     const dateNow = new Date();
@@ -1316,7 +1355,11 @@
         <p class="media-source">${escapeHtml(item[1])}</p>
         <span class="media-open">打开视频链接 ↗</span>
       </a>`;
-      $("dailyMedia").innerHTML = card(media.teach, "当天讲解视频", "teach") + card(media.listen, "磨耳朵", "listen");
+      $("dailyMedia").innerHTML =
+        card(media.teach, "B站 · 中文/双语讲解", "teach") +
+        card(media.youtubeTeach, "YouTube · 英语讲解", "teach") +
+        card(media.listen, "B站 · 中文/双语磨耳朵", "listen") +
+        card(media.youtubeListen, "YouTube · 英语磨耳朵", "listen");
     }
 
     function renderToolkit() {
