@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eef2ef">
+  <title>9/25-9/26 O镇行动地图</title>
+  <link rel="preconnect" href="https://server.arcgisonline.com">
+  <link rel="preconnect" href="https://a.basemaps.cartocdn.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #eef2ef;
+      --surface: #f8faf8;
+      --surface-2: #e5ebe7;
+      --ink: #17201c;
+      --muted: #5c6a63;
+      --line: #c8d1cb;
+      --accent: #2c7455;
+      --accent-ink: #f1f7f3;
+      --accent-soft: #dbeae1;
+      --warn: #9a5b24;
+      --warn-soft: #f3e5d7;
+      --fixed: #315f87;
+      --shadow: 0 18px 50px rgba(35, 62, 49, .12);
+      --radius: 14px;
+      --header-h: 72px;
+      font-family: "Avenir Next", Avenir, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101613;
+        --surface: #18201c;
+        --surface-2: #222c27;
+        --ink: #edf4ef;
+        --muted: #a9b7af;
+        --line: #344139;
+        --accent: #72b994;
+        --accent-ink: #0f1914;
+        --accent-soft: #243d31;
+        --warn: #dfaa73;
+        --warn-soft: #3b2c20;
+        --fixed: #7daed6;
+        --shadow: 0 18px 50px rgba(0, 0, 0, .28);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); }
+
+    body { min-height: 100dvh; }
+
+    button, a { font: inherit; }
+
+    button { color: inherit; }
+
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 66%, transparent);
+      outline-offset: 3px;
+    }
+
+    .app-header {
+      min-height: var(--header-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 12px clamp(16px, 3vw, 42px);
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      position: sticky;
+      top: 0;
+      z-index: 600;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .brand { min-width: 0; }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(20px, 2.4vw, 30px);
+      letter-spacing: -.04em;
+      line-height: 1.05;
+    }
+
+    .brand p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .day-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-width: 224px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+    }
+
+    .day-switch button {
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      padding: 9px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease, transform .2s ease;
+      white-space: nowrap;
+    }
+
+    .day-switch button[aria-selected="true"] {
+      background: var(--accent);
+      color: var(--accent-ink);
+      box-shadow: 0 5px 14px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    .day-switch button:active, .action:active, .step-card:active { transform: translateY(1px); }
+
+    .layout {
+      width: min(1600px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(390px, 520px) minmax(0, 1fr);
+      min-height: calc(100dvh - var(--header-h));
+    }
+
+    .guide-panel {
+      padding: 26px clamp(18px, 3vw, 38px) 80px;
+      border-right: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .day-intro {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .day-intro h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 46px);
+      letter-spacing: -.055em;
+      line-height: 1;
+    }
+
+    .day-intro p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .progress-copy {
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .decision-box {
+      border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--line));
+      background: var(--accent-soft);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin: 0 0 22px;
+    }
+
+    .decision-box strong { display: block; font-size: 14px; margin-bottom: 9px; }
+
+    .decision-options { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .decision-options button {
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .decision-options button[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .decision-note { margin: 9px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
+
+    .transfer-board {
+      margin: 0 0 22px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .transfer-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .transfer-head h3 { margin: 0; font-size: 17px; }
+    .transfer-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .transfer-date { flex: none; color: var(--accent); font-size: 12px; font-weight: 800; }
+
+    .connection-list { display: grid; gap: 9px; }
+
+    .connection {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--bg);
+    }
+
+    .connection.primary { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+
+    .connection-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 9px;
+    }
+
+    .connection-title strong { font-size: 13px; }
+    .connection-arrival { color: var(--accent-strong); font-size: 12px; font-weight: 800; white-space: nowrap; }
+
+    .connection-legs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .connection-leg {
+      min-width: 0;
+      padding-left: 9px;
+      border-left: 3px solid var(--line);
+    }
+
+    .connection.primary .connection-leg { border-left-color: var(--accent); }
+    .connection-leg b { display: block; font-size: 12px; font-variant-numeric: tabular-nums; }
+    .connection-leg span { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+
+    .transfer-rules {
+      margin: 12px 0 0;
+      padding: 11px 12px;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .transfer-rules strong { color: var(--text); }
+
+    .timeline { position: relative; display: grid; gap: 12px; }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      background: var(--line);
+    }
+
+    .step-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      gap: 12px;
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      background: transparent;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+
+    .step-card:hover { background: color-mix(in srgb, var(--surface) 72%, transparent); }
+
+    .step-card.is-active {
+      background: var(--surface);
+      border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
+      box-shadow: var(--shadow);
+    }
+
+    .step-card.is-done { opacity: .64; }
+
+    .step-index {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 2px solid var(--surface);
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .is-active .step-index { background: var(--accent); color: var(--accent-ink); }
+
+    .step-time {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .state-label {
+      border: 1px solid currentColor;
+      border-radius: 7px;
+      padding: 2px 6px;
+      font-size: 10px;
+      letter-spacing: .02em;
+    }
+
+    .state-label.fixed { color: var(--fixed); }
+    .state-label.planned { color: var(--warn); }
+
+    .step-title { margin: 5px 0 3px; font-size: 17px; line-height: 1.25; letter-spacing: -.02em; }
+    .step-summary { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .step-details {
+      display: none;
+      grid-column: 2;
+      padding: 10px 0 2px;
+    }
+
+    .is-active .step-details { display: block; }
+
+    .facts {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 7px 10px;
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .facts dt { color: var(--muted); }
+    .facts dd { margin: 0; font-weight: 600; word-break: break-word; }
+
+    .backup {
+      margin: 0 0 12px;
+      padding: 10px 11px;
+      border-radius: 10px;
+      background: var(--warn-soft);
+      color: color-mix(in srgb, var(--warn) 86%, var(--ink));
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 750;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .action.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+    .map-panel {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100dvh - var(--header-h));
+      min-height: 520px;
+      background: #dfe7e1;
+      overflow: hidden;
+    }
+
+    #map { width: 100%; height: 100%; }
+
+    .map-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      background: var(--surface-2);
+    }
+
+    .map-fallback[hidden] { display: none; }
+
+    .map-fallback div { max-width: 420px; }
+    .map-fallback h3 { margin: 0 0 8px; font-size: 24px; }
+    .map-fallback p { margin: 0 0 16px; color: var(--muted); line-height: 1.6; }
+
+    .map-toolbar {
+      position: absolute;
+      top: 14px;
+      left: 50px;
+      right: 14px;
+      z-index: 500;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .map-toolbar > * { pointer-events: auto; }
+
+    .map-title, .map-actions {
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .map-title { max-width: 480px; padding: 10px 12px; }
+    .map-title strong { display: block; font-size: 13px; }
+    .map-title span { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+
+    .map-actions { display: flex; padding: 4px; align-self: start; }
+
+    .map-actions button {
+      border: 0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .map-actions button:hover { background: var(--surface-2); }
+    .map-actions button.is-active {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .map-legend {
+      position: absolute;
+      left: 14px;
+      bottom: 24px;
+      z-index: 500;
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 7px 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      box-shadow: var(--shadow);
+      font-size: 11px;
+      color: var(--muted);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 7px; }
+    .legend-line { width: 25px; height: 3px; background: var(--accent); }
+    .legend-line.walk { background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 8px); }
+    .legend-line.cable { background: var(--accent); }
+    .legend-line.optional { background: repeating-linear-gradient(90deg, var(--warn) 0 7px, transparent 7px 11px); }
+    .legend-line.rail { background: var(--fixed); }
+
+    .number-marker {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--ink);
+      border: 2px solid var(--accent);
+      box-shadow: 0 5px 14px rgba(22, 41, 31, .22);
+      font-weight: 850;
+      font-size: 12px;
+    }
+
+    .number-marker.focused { background: var(--accent); color: var(--accent-ink); }
+    .number-marker.optional {
+      border-color: var(--warn);
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: 10px;
+    }
+
+    .number-marker.optional.focused { background: var(--warn); color: var(--surface); }
+
+    .leaflet-div-icon { background: transparent; border: 0; }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--surface); color: var(--ink); }
+    .leaflet-popup-content-wrapper { border-radius: 10px; }
+    .leaflet-popup-content { margin: 11px 13px; line-height: 1.45; }
+    .popup-name { font-weight: 800; font-size: 13px; }
+    .popup-local { margin-top: 3px; color: var(--muted); font-size: 11px; }
+
+    .town-label.leaflet-tooltip {
+      padding: 5px 7px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 4px 12px rgba(22, 41, 31, .16);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .town-label.leaflet-tooltip::before { display: none; }
+    .town-label.optional-label.leaflet-tooltip {
+      border-color: var(--warn);
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .quick-reference {
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .quick-reference h3 { margin: 0 0 12px; font-size: 18px; }
+    .reference-grid { display: grid; gap: 9px; }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--surface) 72%, transparent);
+      padding: 0 12px;
+    }
+
+    summary { cursor: pointer; padding: 12px 0; font-weight: 800; font-size: 13px; }
+    details p, details ul { color: var(--muted); font-size: 12px; line-height: 1.65; }
+    details ul { padding-left: 18px; }
+    details a { color: var(--accent); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 900;
+      transform: translate(-50%, 16px);
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: var(--surface);
+      font-size: 12px;
+      font-weight: 750;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 860px) {
+      :root { --header-h: 116px; }
+      .app-header { align-items: flex-start; flex-direction: column; gap: 10px; padding: 12px 16px; }
+      .day-switch { width: 100%; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .day-switch button { min-width: 0; padding-inline: 7px; font-size: 14px; }
+      .layout { display: flex; flex-direction: column; min-height: 0; }
+      .map-panel { position: relative; top: 0; order: 0; height: 48dvh; min-height: 360px; border-bottom: 1px solid var(--line); }
+      .guide-panel { order: 1; border-right: 0; padding: 22px 14px 72px; }
+      .map-toolbar { left: 44px; right: 8px; top: 8px; display: block; }
+      .map-title { width: 100%; max-width: none; padding: 8px 10px; }
+      .map-title span { display: none; }
+      .map-actions {
+        position: absolute;
+        top: 48px;
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .map-actions button { min-width: 0; padding: 7px 4px; font-size: 11px; }
+      .map-legend { display: none; }
+      .day-intro { grid-template-columns: minmax(0, 1fr); align-items: start; }
+      .day-intro h2 { font-size: 34px; }
+      .progress-copy { justify-self: start; }
+    }
+
+    @media (max-width: 420px) {
+      :root { --header-h: 116px; }
+      .brand h1 { font-size: 21px; }
+      .day-switch button { padding-inline: 8px; }
+      .map-panel { height: 44dvh; min-height: 330px; }
+      .town-label.leaflet-tooltip { max-width: 142px; white-space: normal; text-align: center; line-height: 1.25; }
+      .step-card { padding-inline: 8px; }
+      .facts { grid-template-columns: 62px 1fr; }
+      .action { flex: 1 1 calc(50% - 8px); }
+      .transfer-head { align-items: start; }
+      .connection-legs { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+      .app-header, .map-title, .map-actions, .map-legend { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <h1>O镇行动地图</h1>
+      <p>Ortisei / St. Ulrich / Urtijëi，9月25日和26日</p>
+    </div>
+    <nav class="day-switch" aria-label="选择日期">
+      <button type="button" data-day-button="25" aria-selected="true">9/25 抵达和认路</button>
+      <button type="button" data-day-button="26" aria-selected="false">9/26 两山和转场</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="guide-panel" aria-live="polite">
+      <div class="day-intro">
+        <div>
+          <h2 id="day-title">先到酒店，再认三座上山站</h2>
+          <p id="day-summary">不去富内斯。下午只做轻松镇内步行，为第二天建立方向感。</p>
+        </div>
+        <div class="progress-copy" id="progress-copy">完成 0 / 10</div>
+      </div>
+
+      <div class="decision-box" id="decision-box" hidden>
+        <strong>Seceda 只需要做一个选择</strong>
+        <div class="decision-options">
+          <button type="button" data-strategy="weather" aria-pressed="true">现场询问35%优惠</button>
+          <button type="button" data-strategy="slot" aria-pressed="false">网上锁定08:30</button>
+        </div>
+        <p class="decision-note" id="decision-note"></p>
+      </div>
+
+      <section class="transfer-board" id="transfer-board" hidden aria-labelledby="transfer-title">
+        <div class="transfer-head">
+          <div>
+            <h3 id="transfer-title">O镇到多俾亚科车次板</h3>
+            <p>每一格依次是上车时间、线路或车次、下车站。</p>
+          </div>
+          <span class="transfer-date">9月26日</span>
+        </div>
+        <div class="connection-list">
+          <article class="connection primary">
+            <div class="connection-title">
+              <strong>主方案</strong>
+              <span class="connection-arrival">20:00 到 Dobbiaco</span>
+            </div>
+            <div class="connection-legs">
+              <div class="connection-leg"><b>17:31 · Bus 360</b><span>Antoniusplatz 上车<br>18:01 Waidbruck Bahnhof 下车</span></div>
+              <div class="connection-leg"><b>18:18 · R17268</b><span>方向 Brenner<br>18:45 Franzensfeste 下车</span></div>
+              <div class="connection-leg"><b>18:51 · R1887</b><span>方向 Innichen<br>20:00 Toblach 下车</span></div>
+            </div>
+          </article>
+          <article class="connection">
+            <div class="connection-title">
+              <strong>到 Fortezza 后没赶上 18:51</strong>
+              <span class="connection-arrival">20:30 到 Dobbiaco</span>
+            </div>
+            <div class="connection-legs">
+              <div class="connection-leg"><b>17:31 · Bus 360</b><span>18:01 到 Waidbruck</span></div>
+              <div class="connection-leg"><b>18:18 · R17268</b><span>18:45 到 Franzensfeste</span></div>
+              <div class="connection-leg"><b>19:21 · R1889</b><span>方向 Innichen<br>20:30 Toblach 下车</span></div>
+            </div>
+          </article>
+          <article class="connection">
+            <div class="connection-title">
+              <strong>错过 17:31 的 360</strong>
+              <span class="connection-arrival">21:00 到 Dobbiaco</span>
+            </div>
+            <div class="connection-legs">
+              <div class="connection-leg"><b>18:31 · Bus 360</b><span>18:31 Antoniusplatz 上车<br>19:01 Waidbruck 下车</span></div>
+              <div class="connection-leg"><b>19:18 · R17270</b><span>方向 Brenner<br>19:45 Franzensfeste 下车</span></div>
+              <div class="connection-leg"><b>19:51 · R1891</b><span>方向 Innichen<br>21:00 Toblach 下车</span></div>
+            </div>
+          </article>
+        </div>
+        <p class="transfer-rules"><strong>现场动作：</strong>360 上车刷 Guest Pass。到 Waidbruck 后进火车站，在蓝色机器刷二维码，再看电子屏确认站台。Fortezza 直接换乘通常不用重复刷，只有 6 分钟，不要出站；站台以当天电子屏为准。全程不预约。</p>
+      </section>
+
+      <div class="timeline" id="timeline"></div>
+
+      <aside class="quick-reference">
+        <h3>现场速查</h3>
+        <div class="reference-grid">
+          <details>
+            <summary>三个名字其实是同一个镇</summary>
+            <p>Ortisei = St. Ulrich = Urtijëi。公交屏幕更常出现德语 St. Ulrich。</p>
+          </details>
+          <details>
+            <summary>票和预约怎么分</summary>
+            <ul>
+              <li>Italo 8973、8954：已购票，按票面座位上车。</li>
+              <li>350、360、区域火车：普通公共交通，不预约。公交上车刷 Guest Pass；第一次坐火车前在车站蓝色机器刷二维码。直接换乘下一班区域火车通常不用重复刷。</li>
+              <li>Seceda：2026 年上山改为 30 分钟固定时段，线上票不可退改。</li>
+              <li>Mont Sëuc：现场买票即可，建议买缆车加 Sole 吊椅往返组合票。</li>
+            </ul>
+          </details>
+          <details>
+            <summary>地图怎么看</summary>
+            <p>O镇三站地图把 Seceda、Mont Sëuc、Resciesa 放在一起。缆车总览中绿色是9月26日主计划，橙色是其他可选缆车。乘坐时间均不含排队。</p>
+          </details>
+          <details open>
+            <summary>O镇三座怎么选</summary>
+            <ul>
+              <li><strong>Seceda：</strong>看 Odle 刀锋山脊，最震撼。9月25日和26日运营至17:30。</li>
+              <li><strong>Mont Sëuc：</strong>看休斯高原草甸和 Sassolungo，晚光首选。运营至18:00。</li>
+              <li><strong>Resciesa：</strong>登山缆索铁路，约8分钟到约2200米，人通常更少。运营至17:00。</li>
+            </ul>
+            <p><strong>日落结论：</strong>9月25日约19:05日落，三座都已停运。不要留在山顶等完整日落。想看傍晚暖光选 Mont Sëuc，最晚17:45开始排队下山，18:00前下撤。</p>
+          </details>
+          <details>
+            <summary>主计划缆车时间和到达点</summary>
+            <ul>
+              <li><strong>Seceda：</strong>计划 08:30-11:20。Ortisei → Furnes → Seceda，两段合计乘坐约20分钟，Furnes 需要换乘并再次扫码。到达 Seceda 山顶站约2518米。</li>
+              <li><strong>Mont Sëuc：</strong>计划 13:00-16:15。Ortisei → Mont Sëuc，单程乘坐约10分钟。到达 Alpe di Siusi 高原约2000米。</li>
+              <li><strong>Sole 吊椅：</strong>下午草甸路线回程使用，单程约4分钟。从 Sporthotel Sonne 一侧约1866米返回 Mont Sëuc 一侧约2004米。</li>
+            </ul>
+            <p>以上乘坐时间不含排队。Seceda 的大缆车若需等下一班，总耗时会增加。</p>
+          </details>
+          <details>
+            <summary>橙色备选缆车</summary>
+            <ul>
+              <li><strong>Resciesa / Raschötz：</strong>O镇内最实用的备选。索道约8分钟到约2200米，9月26日 08:30-17:00，往返 €34。</li>
+              <li><strong>Col Raiser：</strong>位于 Santa Cristina，9月26日 08:30-17:00，可看 Odle 山群另一侧。</li>
+              <li><strong>Ciampinoi：</strong>位于 Selva 镇中心，9月26日 08:30-17:00，适合看 Sassolungo 和 Sella。</li>
+              <li><strong>Dantercepies：</strong>位于 Selva，9月26日 08:30-17:00，视野朝向 Sella 和 Gardena Pass。</li>
+            </ul>
+            <p>后三座都要先坐公交沿山谷向东，不建议再塞入你们9月26日的双山行程。</p>
+          </details>
+          <details>
+            <summary>官方资料</summary>
+            <ul>
+              <li><a href="https://www.suedtirolmobil.info/fileadmin/pdf/2026/350_20251214.pdf" target="_blank" rel="noreferrer">350 官方时刻表</a></li>
+              <li><a href="https://www.suedtirolmobil.info/fileadmin/pdf/2026/360_20260907.pdf" target="_blank" rel="noreferrer">360 官方时刻表</a></li>
+              <li><a href="https://www.suedtirolmobil.info/fileadmin/pdf/2026/100_20260127.pdf" target="_blank" rel="noreferrer">铁路走廊 100 官方表</a></li>
+              <li><a href="https://www.suedtirolmobil.info/fileadmin/pdf/2026/400_20260614.pdf" target="_blank" rel="noreferrer">铁路走廊 400 官方表</a></li>
+              <li><a href="https://www.seceda.it/en/summer" target="_blank" rel="noreferrer">Seceda 开放和票价</a></li>
+              <li><a href="https://funiviaortisei.eu/de/orari-e-prezzi" target="_blank" rel="noreferrer">Mont Sëuc 开放和票价</a></li>
+              <li><a href="https://www.resciesa.com/en/info.asp" target="_blank" rel="noreferrer">Resciesa 2026开放和票价</a></li>
+              <li><a href="https://www.valgardena.it/en/summer-holidays-dolomites/lifts/" target="_blank" rel="noreferrer">Val Gardena 2026全部缆车</a></li>
+            </ul>
+          </details>
+        </div>
+      </aside>
+    </section>
+
+    <section class="map-panel" aria-label="互动地图">
+      <div id="map"></div>
+      <div class="map-fallback" id="map-fallback">
+        <div>
+          <h3>地图正在载入</h3>
+          <p>地图底图需要联网。如果一直没有显示，行程卡里的 Google 地图按钮仍然可以使用。</p>
+          <a class="action primary" href="https://www.google.com/maps/search/?api=1&query=Ortisei" target="_blank" rel="noreferrer">打开 O镇地图</a>
+        </div>
+      </div>
+      <div class="map-toolbar">
+        <div class="map-title">
+          <strong id="map-title">O镇三座上山站</strong>
+          <span id="map-subtitle">酒店、Seceda、Mont Sëuc、Resciesa 和圣安东尼广场公交站。</span>
+        </div>
+        <div class="map-actions">
+          <button type="button" id="show-day">当天转场</button>
+          <button type="button" id="show-town" class="is-active">O镇三站</button>
+          <button type="button" id="show-cables">缆车总览</button>
+          <button type="button" id="locate-me">定位我</button>
+        </div>
+      </div>
+      <div class="map-legend" aria-label="地图图例">
+        <div class="legend-item"><span class="legend-line"></span>公路</div>
+        <div class="legend-item"><span class="legend-line rail"></span>火车</div>
+        <div class="legend-item"><span class="legend-line walk"></span>步行</div>
+        <div class="legend-item"><span class="legend-line cable"></span>主计划缆车</div>
+        <div class="legend-item"><span class="legend-line optional"></span>备选缆车</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const places = {
+      milan: { name: "Milano Centrale", local: "米兰中央车站", lat: 45.4858786, lng: 9.2042617 },
+      verona: { name: "Verona Porta Nuova", local: "维罗纳新门站", lat: 45.4291820, lng: 10.9823706 },
+      bolzanoRail: { name: "Bolzano / Bozen Bahnhof", local: "博尔扎诺火车站", lat: 46.4969010, lng: 11.3587048 },
+      bolzanoBus: { name: "Bolzano, Autostazione / Bozen, Busbahnhof", local: "博尔扎诺汽车站，Via Renon / Rittnerstraße", lat: 46.4982367, lng: 11.3612899 },
+      antonio: { name: "Ortisei, Piazza S. Antonio / St. Ulrich, Antoniusplatz", local: "350、360 公交主站", lat: 46.5732692, lng: 11.6740324 },
+      hotel: { name: "B&B Villa Angelino", local: "Streda Petlin 12", lat: 46.5745573, lng: 11.6698833 },
+      museum: { name: "Museum Gherdëina", local: "Streda Rezia 83", lat: 46.5738835, lng: 11.6745514 },
+      parish: { name: "Pfarrkirche St. Ulrich", local: "奥蒂塞伊堂区教堂", lat: 46.5751884, lng: 11.6718971 },
+      anna: { name: "St.-Anna-Kirche / Chiesa di Sant'Anna", local: "圣安娜教堂和墓园", lat: 46.5773680, lng: 11.6757906 },
+      secedaValley: { name: "Funivie Seceda", local: "Via Val d'Anna 2；换乘 Furnes 后到 Seceda 2518米，约20分钟；运营至17:30", lat: 46.5764208, lng: 11.6750721 },
+      furnes: { name: "Furnes", local: "中转站，再刷一次同一张票", lat: 46.5896654, lng: 11.7021929 },
+      secedaTop: { name: "Seceda Bergstation", local: "Seceda 山顶站", lat: 46.5979360, lng: 11.7243474 },
+      secedaView: { name: "Seceda ridgeline viewpoint", local: "刀锋山脊观景范围", lat: 46.6001980, lng: 11.7282000 },
+      montValley: { name: "Funivie Ortisei - Alpe di Siusi", local: "Via Setil 9；到 Alpe di Siusi 约2000米，约10分钟；运营至18:00", lat: 46.5728649, lng: 11.6712802 },
+      montTop: { name: "Mont Sëuc Bergstation", local: "Mont Sëuc 山顶站", lat: 46.5580492, lng: 11.6647087 },
+      sonne: { name: "Sporthotel Sonne", local: "草甸步行转折点附近", lat: 46.5539756, lng: 11.6628684 },
+      meadow: { name: "Sanon 方向折返点", local: "走 20 分钟左右后按时间折返", lat: 46.5501000, lng: 11.6566000 },
+      soleTop: { name: "Sole chairlift upper station", local: "Sole 吊椅上站", lat: 46.5577136, lng: 11.6636386 },
+      resciesaValley: { name: "Funicolare Resciesa / Raschötzbahn", local: "登山缆索铁路；约8分钟到 Resciesa 约2200米；运营至17:00", lat: 46.5780002, lng: 11.6721639 },
+      resciesaTop: { name: "Resciesa / Raschötz mountain station", local: "约2200米；9月26日运营至17:00", lat: 46.5979096, lng: 11.6793831 },
+      colRaiserValley: { name: "Col Raiser valley station", local: "Santa Cristina 山脚站；9月26日 08:30-17:00", lat: 46.5650691, lng: 11.7366984 },
+      colRaiserTop: { name: "Col Raiser mountain station", local: "Odle 山群南侧高山区域", lat: 46.5847839, lng: 11.7453183 },
+      ciampinoiValley: { name: "Ciampinoi valley station", local: "Selva 镇中心山脚站；9月26日 08:30-17:00", lat: 46.5533122, lng: 11.7617381 },
+      ciampinoiTop: { name: "Ciampinoi mountain station", local: "Sassolungo 和 Sella 观景方向", lat: 46.5386150, lng: 11.7533895 },
+      danterValley: { name: "Dantercepies valley station", local: "Selva 山脚站；9月26日 08:30-17:00", lat: 46.5556488, lng: 11.7679757 },
+      danterMid: { name: "Dantercepies middle station", local: "I段和II段衔接处", lat: 46.5504312, lng: 11.7946651 },
+      danterTop: { name: "Dantercepies mountain station", local: "Gardena Pass 和 Sella 观景方向", lat: 46.5536644, lng: 11.7997603 },
+      waidbruck: { name: "Ponte Gardena-Laion / Waidbruck-Lajen Bahnhof", local: "公交和火车同一换乘点", lat: 46.6011636, lng: 11.5327733 },
+      fortezza: { name: "Fortezza / Franzensfeste", local: "换乘去 Val Pusteria 的区域火车", lat: 46.7891042, lng: 11.6106334 },
+      dobbiaco: { name: "Dobbiaco / Toblach Bahnhof", local: "多比亚科火车站", lat: 46.7245595, lng: 12.2257144 }
+    };
+
+    const days = {
+      25: {
+        title: "先到酒店，再认三座上山站",
+        summary: "不去富内斯。下午只做轻松镇内步行，为第二天建立方向感。",
+        townOverview: ["hotel", "secedaValley", "montValley", "resciesaValley", "antonio"],
+        overview: ["milan", "verona", "bolzanoRail", "bolzanoBus", "antonio", "hotel", "museum", "parish", "anna", "secedaValley", "resciesaValley", "montValley"],
+        steps: [
+          {
+            id: "d25-milan-verona", time: "07:35-08:47", state: "已购", stateClass: "fixed",
+            title: "米兰到维罗纳", summary: "Milano Centrale 到 Verona Porta Nuova，Italo 8973，1小时12分。",
+            transport: "Italo 8973", ticket: "已购票，按票面车厢和座位", identify: "站内大屏找 8973；到 Verona Porta Nuova 下车", reserve: "已预约固定车次",
+            backup: "误车后不要默认下一班可免费改签，先找 Italo 柜台处理。",
+            points: ["milan", "verona"], type: "rail",
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Milano+Centrale&destination=Verona+Porta+Nuova&travelmode=transit",
+            copy: "Milano Centrale -> Verona Porta Nuova | Italo 8973 | 07:35-08:47"
+          },
+          {
+            id: "d25-transfer", time: "08:47-10:50", state: "固定衔接", stateClass: "fixed",
+            title: "维罗纳站内换乘", summary: "预留2小时03分，不需要去另一个火车站。",
+            transport: "步行找下一站台", ticket: "无需新增车票", identify: "大屏找 Italo 8954 和 Bolzano / Bozen", reserve: "无额外预约",
+            backup: "站台通常临近发车才公布。先确认 binario，再去站台。",
+            points: ["verona"], type: "walk", zoom: 16,
+            maps: "https://www.google.com/maps/search/?api=1&query=Verona+Porta+Nuova",
+            copy: "Verona Porta Nuova | 换乘 Italo 8954 | 10:50 发车"
+          },
+          {
+            id: "d25-verona-bolzano", time: "10:50-12:23", state: "已购", stateClass: "fixed",
+            title: "维罗纳到博尔扎诺", summary: "Verona Porta Nuova 到 Bolzano / Bozen，Italo 8954，1小时33分。",
+            transport: "Italo 8954", ticket: "已购票，按票面车厢和座位", identify: "车站也会显示德语 Bozen；在 Bolzano 下车", reserve: "已预约固定车次",
+            backup: "到站后不赶 12:28 的 350，按计划走 13:28，时间更安全。",
+            points: ["verona", "bolzanoRail"], type: "rail",
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Verona+Porta+Nuova&destination=Bolzano+Bozen+Train+Station&travelmode=transit",
+            copy: "Verona Porta Nuova -> Bolzano / Bozen | Italo 8954 | 10:50-12:23"
+          },
+          {
+            id: "d25-bolzano-walk", time: "12:23-12:35", state: "计划", stateClass: "planned",
+            title: "走到博尔扎诺汽车站", summary: "火车站到汽车站约350米，步行约5分钟。",
+            transport: "步行", ticket: "免费", identify: "搜完整站名：Busbahnhof Bozen - Autostazione di Bolzano", reserve: "不预约",
+            backup: "不要搜成 Bressanone 汽车站。正确地址在 Via Renon / Rittnerstraße。",
+            points: ["bolzanoRail", "bolzanoBus"], type: "walk", zoom: 16,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Bolzano+Bozen+Train+Station&destination=Busbahnhof+Bozen+Autostazione+di+Bolzano&travelmode=walking",
+            copy: "Busbahnhof Bozen - Autostazione di Bolzano, Via Renon / Rittnerstraße"
+          },
+          {
+            id: "d25-lunch", time: "12:35-13:15", state: "缓冲", stateClass: "planned",
+            title: "简餐和候车", summary: "只在车站周边吃简餐或外带，13:15前回到站台。",
+            transport: "步行", ticket: "自行用餐", identify: "13:28 的 350；方向 Selva / Wolkenstein / Plan", reserve: "公交不预约",
+            backup: "车晚点时直接取消午餐，先到汽车站确认站台。",
+            points: ["bolzanoBus"], type: "walk", zoom: 16,
+            maps: "https://www.google.com/maps/search/?api=1&query=Busbahnhof+Bozen+Autostazione+di+Bolzano",
+            copy: "13:28 | Bus 350 | direction Selva / Wolkenstein / Plan"
+          },
+          {
+            id: "d25-bus350", time: "13:28-14:25", state: "计划班次", stateClass: "planned",
+            title: "350 公交到 O镇", summary: "博尔扎诺汽车站上车，Piazza S. Antonio 下车，约57分钟。",
+            transport: "350 公交", ticket: "Guest Pass 有效则 €0；无卡在 App 或现场购票，预算约 €6/人", identify: "车头确认 350，方向 Selva / Wolkenstein / Plan", reserve: "不预约；上车刷 Guest Pass 二维码",
+            backup: "错过后优先看 14:28 左右的下一班。实际站台和延误以 Südtirolmobil App 为准。",
+            points: ["bolzanoBus", "antonio"], type: "road",
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Busbahnhof+Bozen+Autostazione+di+Bolzano&destination=Ortisei+Piazza+S.+Antonio&travelmode=transit",
+            copy: "Bolzano, Autostazione / Bozen, Busbahnhof -> Ortisei, Piazza S. Antonio / St. Ulrich, Antoniusplatz | Bus 350 | 13:28-14:25"
+          },
+          {
+            id: "d25-hotel", time: "14:25-14:40", state: "计划", stateClass: "planned",
+            title: "下车走到 Villa Angelino", summary: "从 Antoniusplatz 到 Streda Petlin 12，约5分钟。",
+            transport: "步行", ticket: "免费", identify: "下车站完整名：Ortisei, Piazza S. Antonio / St. Ulrich, Antoniusplatz", reserve: "住宿已确认",
+            backup: "地图搜 B&B Villa Angelino 或 Streda Petlin 12。先放大行李，再出门。",
+            points: ["antonio", "hotel"], type: "walk", zoom: 16,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Ortisei+Piazza+S.+Antonio&destination=Streda+Petlin+12+Ortisei&travelmode=walking",
+            copy: "B&B Villa Angelino, Streda Petlin 12, 39046 Ortisei"
+          },
+          {
+            id: "d25-museum", time: "15:00-16:00", state: "可选", stateClass: "planned",
+            title: "Museum Gherdëina", summary: "先看拉丁文化和木雕。若不感兴趣，可直接进入镇内步行。",
+            transport: "酒店步行约7分钟", ticket: "成人 €10，现场购买", identify: "Streda Rezia 83，外墙找 Museum Gherdëina", reserve: "通常不预约；2026夏季周一至周六 10:00-18:00",
+            backup: "火车晚点或太累就删掉这一项，不影响后续认路。",
+            points: ["hotel", "museum"], type: "walk", zoom: 16,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Streda+Petlin+12+Ortisei&destination=Museum+Gherdeina&travelmode=walking",
+            copy: "Museum Gherdëina, Streda Rezia 83, Ortisei"
+          },
+          {
+            id: "d25-town", time: "16:00-17:15", state: "轻松步行", stateClass: "planned",
+            title: "O镇中心小环线", summary: "圣安东尼广场、Rezia 步行街、堂区教堂、圣安娜教堂。",
+            transport: "全程步行约2公里", ticket: "免费", identify: "按 Antoniusplatz -> Streda Rezia -> Pfarrkirche -> St.-Anna-Kirche", reserve: "不预约",
+            backup: "下雨时保留广场、教堂和步行街，把圣安娜后的户外路段缩短。",
+            points: ["museum", "antonio", "parish", "anna"], type: "walk", zoom: 15,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Museum+Gherdeina&destination=Chiesa+di+Sant%27Anna+Ortisei&waypoints=Piazza+Sant%27Antonio+Ortisei%7CChiesa+parrocchiale+di+Ortisei&travelmode=walking",
+            copy: "Piazza Sant'Antonio -> Streda Rezia -> Pfarrkirche St. Ulrich -> St.-Anna-Kirche"
+          },
+          {
+            id: "d25-scout", time: "17:15-18:45", state: "认路", stateClass: "planned",
+            title: "踩点三座上山站", summary: "依次认 Seceda、Resciesa、Mont Sëuc，然后回酒店。三站都在镇内。",
+            transport: "镇内步行约2.5公里", ticket: "免费", identify: "Seceda：Via Val d'Anna 2；Resciesa：Via Rasciesa；Mont Sëuc：Via Setil 9", reserve: "当天不乘坐",
+            backup: "至少认清 Seceda 和 Mont Sëuc。Resciesa 是天气或体力不适合双山时的备选。",
+            points: ["anna", "secedaValley", "resciesaValley", "montValley", "hotel"], type: "walk", zoom: 15,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Chiesa+di+Sant%27Anna+Ortisei&destination=Streda+Petlin+12+Ortisei&waypoints=Funivie+Seceda%7CFunicolare+Resciesa%7CFunivie+Ortisei+Alpe+di+Siusi&travelmode=walking",
+            copy: "Funivie Seceda | Funicolare Resciesa / Raschötzbahn | Funivie Ortisei - Alpe di Siusi"
+          }
+        ]
+      },
+      26: {
+        title: "上午 Seceda，下午休斯高原",
+        summary: "16:15前回到镇里，17:31坐360离开，晚间抵达 Dobbiaco。",
+        townOverview: ["hotel", "secedaValley", "montValley", "resciesaValley", "antonio"],
+        overview: ["hotel", "secedaValley", "secedaTop", "montValley", "montTop", "antonio", "waidbruck", "fortezza", "dobbiaco"],
+        steps: [
+          {
+            id: "d26-to-seceda", time: "08:05-08:30", state: "先认准站", stateClass: "planned",
+            title: "走到 Seceda，完成检票", summary: "Villa Angelino 到 Via Val d'Anna 2，步行约10分钟。",
+            transport: "步行到 Funivie Seceda", ticket: "线上票走 QR 闸机；现场票先找 biglietteria", identify: "SECEDA、Ortisei-Furnes；不要走到 Mont Sëuc", reserve: "08:15前到站；计划上山时段 08:30-09:00",
+            backup: "出发前把 QR 保存为离线截图。",
+            points: ["hotel", "secedaValley"], type: "walk", zoom: 16,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Streda+Petlin+12+Ortisei&destination=Funivie+Seceda&travelmode=walking",
+            copy: "Funivie Seceda, Via Val d'Anna 2, 39046 Ortisei"
+          },
+          {
+            id: "d26-seceda", time: "08:30-11:20", state: "需选上山时段", stateClass: "planned",
+            title: "Seceda 缆车和刀锋山脊", summary: "Ortisei → Furnes → Seceda；山顶轻走2-3公里，原路返回。",
+            transport: "两段缆车上山；10:45左右按原路下山", ticket: "成人往返 €74，票名 Up & down", identify: "Furnes 再刷同一张 QR；山顶看 Panoramapoint / Summit Cross", reserve: "2026年上山按30分钟时段；下山不用预约",
+            backup: "Fermeda 吊椅9月20日后关闭，不下切到 Pieralongia 或 Troier。强风或停运就取消。",
+            points: ["secedaValley", "furnes", "secedaTop", "secedaView", "secedaTop", "furnes", "secedaValley"], type: "cable", zoom: 13,
+            segments: [
+              { points: ["secedaValley", "furnes", "secedaTop"], type: "cable" },
+              { points: ["secedaTop", "secedaView", "secedaTop"], type: "walk" },
+              { points: ["secedaTop", "furnes", "secedaValley"], type: "cable" }
+            ],
+            maps: "https://www.google.com/maps/search/?api=1&query=Seceda+Panoramapoint",
+            copy: "Ortisei -> Furnes -> Seceda -> Panoramapoint -> Summit Cross -> 原路返回"
+          },
+          {
+            id: "d26-lunch", time: "11:25-13:00", state: "午餐和换站", stateClass: "planned",
+            title: "午餐，走到 Mont Sëuc", summary: "简餐后横穿镇中心，两座主计划山脚站相距约800米。",
+            transport: "步行到 Funivie Ortisei - Alpe di Siusi", ticket: "无需提前买票，到站看天气再买", identify: "Via Setil 9；搜完整名称，不要只搜 Seiser Alm Bahn", reserve: "12:50左右到站，计划13:00上山",
+            backup: "Seceda 延误就改吃外带，优先保住16:00下山。",
+            points: ["secedaValley", "hotel", "montValley"], type: "walk", zoom: 15,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Funivie+Seceda&destination=Funivie+Ortisei+Alpe+di+Siusi&waypoints=Streda+Petlin+12+Ortisei&travelmode=walking",
+            copy: "Funivie Ortisei - Alpe di Siusi, Via Setil 9, Ortisei"
+          },
+          {
+            id: "d26-mont", time: "13:00-16:15", state: "16:00下山", stateClass: "fixed",
+            title: "Mont Sëuc 和休斯高原", summary: "缆车上山 → Trail 9 → Sonne → 6B短走 → Sole吊椅返回。",
+            transport: "Ortisei-Mont Sëuc 缆车；草甸轻走约2小时", ticket: "推荐组合往返 €48.50；不坐 Sole 则普通往返 €41", identify: "Sole 吊椅坐向 Mont Sëuc / Bergstation；15:20左右折返", reserve: "现场购票，不预约；16:00进入下行缆车",
+            backup: "下午起云就只走到 Sporthotel Sonne。不要走完整大环线。",
+            points: ["montValley", "montTop", "sonne", "meadow", "sonne", "soleTop", "montTop", "montValley"], type: "cable", zoom: 14,
+            segments: [
+              { points: ["montValley", "montTop"], type: "cable" },
+              { points: ["montTop", "sonne", "meadow", "sonne"], type: "walk" },
+              { points: ["sonne", "soleTop"], type: "cable" },
+              { points: ["soleTop", "montTop"], type: "walk" },
+              { points: ["montTop", "montValley"], type: "cable" }
+            ],
+            maps: "https://www.google.com/maps/search/?api=1&query=Sporthotel+Sonne+Alpe+di+Siusi",
+            copy: "Mont Sëuc -> Trail 9 -> Sporthotel Sonne -> Trail 6B短走 -> Sole吊椅 -> 16:00缆车下山"
+          },
+          {
+            id: "d26-luggage", time: "16:15-17:00", state: "取行李", stateClass: "planned",
+            title: "回酒店，再走到公交站", summary: "16:25到酒店，16:50离店，17:00前到 Antoniusplatz。",
+            transport: "Mont Sëuc 山脚站 → Villa Angelino → Antoniusplatz", ticket: "免费步行", identify: "站名 Ortisei, Piazza S. Antonio / St. Ulrich, Antoniusplatz", reserve: "提前让酒店确认下午寄存行李",
+            backup: "到站后先在电子屏确认360和站台。",
+            points: ["montValley", "hotel", "antonio"], type: "walk", zoom: 15,
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Funivie+Ortisei+Alpe+di+Siusi&destination=Ortisei+Piazza+S.+Antonio&waypoints=Streda+Petlin+12+Ortisei&travelmode=walking",
+            copy: "Ortisei, Piazza S. Antonio / St. Ulrich, Antoniusplatz"
+          },
+          {
+            id: "d26-bus360", time: "17:31-18:01", state: "计划班次", stateClass: "planned",
+            title: "360 公交到 Ponte Gardena", summary: "Antoniusplatz 上车，Waidbruck, Bahnhof 下车，约30分钟。",
+            transport: "Bus 360", ticket: "Guest Pass 有效则 €0；上车刷二维码", identify: "车头确认360，方向 Bressanone / Brixen", reserve: "不预约",
+            backup: "错过后看18:31左右的360，约19:01到 Waidbruck。",
+            points: ["antonio", "waidbruck"], type: "road",
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Ortisei+Piazza+S.+Antonio&destination=Waidbruck+Lajen+Bahnhof&travelmode=transit",
+            copy: "Ortisei, Piazza S. Antonio / St. Ulrich, Antoniusplatz -> Ponte Gardena, Stazione / Waidbruck, Bahnhof | Bus 360 | 17:31-18:01"
+          },
+          {
+            id: "d26-train100", time: "18:18-18:45", state: "计划车次", stateClass: "planned",
+            title: "Ponte Gardena 到 Fortezza", summary: "区域火车 R17268，约27分钟。",
+            transport: "区域火车 R17268", ticket: "Guest Pass 有效则 €0；进站前刷二维码", identify: "方向 Brennero / Brenner；Fortezza / Franzensfeste 下车", reserve: "不预约；R17268 只是本时段车次号",
+            backup: "错过后看 R17270，约19:18出发，19:45到 Fortezza。",
+            points: ["waidbruck", "fortezza"], type: "rail",
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Waidbruck+Lajen+Bahnhof&destination=Franzensfeste+Bahnhof&travelmode=transit",
+            copy: "Ponte Gardena-Laion / Waidbruck-Lajen -> Fortezza / Franzensfeste | R17268 | 18:18-18:45 | direction Brennero / Brenner"
+          },
+          {
+            id: "d26-train400", time: "18:51-20:00", state: "计划车次", stateClass: "planned",
+            title: "Fortezza 到 Dobbiaco", summary: "换乘仅6分钟，区域火车 R1887，约69分钟。",
+            transport: "区域火车 R1887", ticket: "Guest Pass 有效则 €0；换车前确认已完成本段检票", identify: "方向 Innichen / S. Candido；Dobbiaco / Toblach 下车，不坐到终点", reserve: "不预约；400 是时刻表走廊号，不是固定车次号",
+            backup: "主连接只有6分钟，不要出站。若没赶上，乘 R1889：19:21出发，20:30到 Dobbiaco。",
+            points: ["fortezza", "dobbiaco"], type: "rail",
+            maps: "https://www.google.com/maps/dir/?api=1&origin=Franzensfeste+Bahnhof&destination=Toblach+Bahnhof&travelmode=transit",
+            copy: "Fortezza / Franzensfeste -> Dobbiaco / Toblach | R1887 | 18:51-20:00 | direction Innichen / S. Candido"
+          }
+        ]
+      }
+    };
+
+    let currentDay = "25";
+    let activeStepId = null;
+    let map;
+    let activeLayer;
+    let locationLayer;
+    let mapMode = "town";
+    let baseTileLayer;
+    let tileProviderIndex = 0;
+    let baseMapReady = false;
+    const storedDone = new Set(JSON.parse(localStorage.getItem("ortisei-done") || "[]"));
+
+    const routeStyles = {
+      rail: { color: "#315f87", weight: 5, opacity: .88 },
+      road: { color: "#2c7455", weight: 5, opacity: .88 },
+      walk: { color: "#2c7455", weight: 4, opacity: .92, dashArray: "7 7" },
+      cable: { color: "#2c7455", weight: 5, opacity: .92 },
+      optionalCable: { color: "#9a5b24", weight: 4, opacity: .86, dashArray: "9 7" }
+    };
+
+    const tileProviders = [
+      {
+        name: "Esri 地形地图",
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        options: {
+          maxZoom: 19,
+          attribution: "Tiles &copy; Esri; sources: Esri, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors, GIS User Community"
+        }
+      },
+      {
+        name: "CARTO 备用地图",
+        url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        options: {
+          subdomains: "abcd",
+          maxZoom: 20,
+          attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+        }
+      }
+    ];
+
+    function loadTileProvider(index) {
+      const fallback = document.getElementById("map-fallback");
+      const provider = tileProviders[index];
+      let errorCount = 0;
+
+      tileProviderIndex = index;
+      if (baseTileLayer) map.removeLayer(baseTileLayer);
+      baseTileLayer = L.tileLayer(provider.url, {
+        ...provider.options,
+        keepBuffer: 5,
+        updateWhenIdle: false,
+        crossOrigin: true
+      });
+
+      baseTileLayer.on("load", () => {
+        baseMapReady = true;
+        fallback.hidden = true;
+      });
+
+      baseTileLayer.on("tileerror", () => {
+        errorCount += 1;
+        if (errorCount < 3) return;
+        if (index + 1 < tileProviders.length) {
+          baseTileLayer.off();
+          loadTileProvider(index + 1);
+          showToast("主地图未响应，已切换备用底图");
+          return;
+        }
+        document.querySelector("#map-fallback h3").textContent = "地图底图暂时无法载入";
+        document.querySelector("#map-fallback p").textContent = "线路与站点资料仍可使用；点击下方按钮可直接在 Google 地图中查看 O镇。";
+        fallback.hidden = false;
+      });
+
+      baseTileLayer.addTo(map);
+    }
+
+    function initMap() {
+      if (!window.L) return;
+      map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([46.5733, 11.6740], 14);
+      loadTileProvider(0);
+      activeLayer = L.layerGroup().addTo(map);
+      locationLayer = L.layerGroup().addTo(map);
+      showTownOverview();
+      setTimeout(() => map.invalidateSize(), 80);
+    }
+
+    function markerIcon(number, focused = false, variant = "") {
+      return L.divIcon({
+        className: "",
+        html: `<div class="number-marker${focused ? " focused" : ""}${variant ? ` ${variant}` : ""}">${number}</div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        popupAnchor: [0, -14]
+      });
+    }
+
+    function addMarker(placeKey, number, focused = false, variant = "") {
+      const p = places[placeKey];
+      return L.marker([p.lat, p.lng], { icon: markerIcon(number, focused, variant) })
+        .bindPopup(`<div class="popup-name">${p.name}</div><div class="popup-local">${p.local}</div>`)
+        .addTo(activeLayer);
+    }
+
+    function addTownMarker(placeKey, badge, label, direction, optional = false) {
+      return addMarker(placeKey, badge, true, optional ? "optional" : "").bindTooltip(label, {
+        permanent: true,
+        direction,
+        offset: direction === "left" ? [-13, 0]
+          : direction === "bottom" ? [0, 13]
+          : direction === "top" ? [0, -13]
+          : [13, 0],
+        className: `town-label${optional ? " optional-label" : ""}`,
+        opacity: 1
+      });
+    }
+
+    function addCableMarker(placeKey, badge, label, direction, optional = false) {
+      const marker = addMarker(placeKey, badge, true, optional ? "optional" : "");
+      if (!label) return marker;
+      const offset = direction === "left" ? [-13, 0]
+        : direction === "right" ? [13, 0]
+        : direction === "top" ? [0, -13]
+        : [0, 13];
+      return marker.bindTooltip(label, {
+        permanent: true,
+        direction,
+        offset,
+        className: `town-label${optional ? " optional-label" : ""}`,
+        opacity: 1
+      });
+    }
+
+    function setMapMode(mode) {
+      mapMode = mode;
+      document.getElementById("show-town").classList.toggle("is-active", mode === "town");
+      document.getElementById("show-cables").classList.toggle("is-active", mode === "cables");
+      document.getElementById("show-day").classList.toggle("is-active", mode === "day");
+    }
+
+    function drawRoute(pointKeys, type, focused = true, segments = null) {
+      if (!map) return;
+      setMapMode("step");
+      activeLayer.clearLayers();
+      const coords = pointKeys.map(key => [places[key].lat, places[key].lng]);
+      [...new Set(pointKeys)].forEach((key, index) => addMarker(key, index + 1, focused));
+      if (segments) {
+        segments.forEach(segment => {
+          const segmentCoords = segment.points.map(key => [places[key].lat, places[key].lng]);
+          L.polyline(segmentCoords, routeStyles[segment.type] || routeStyles.road).addTo(activeLayer);
+        });
+      } else if (coords.length > 1) {
+        L.polyline(coords, routeStyles[type] || routeStyles.road).addTo(activeLayer);
+      }
+      const bounds = L.latLngBounds(coords);
+      if (coords.length === 1) map.setView(coords[0], 16, { animate: true });
+      else map.fitBounds(bounds.pad(window.innerWidth < 860 ? .25 : .18), { animate: true, maxZoom: 16 });
+    }
+
+    function showTownOverview() {
+      if (!map) return;
+      setMapMode("town");
+      activeLayer.clearLayers();
+
+      addTownMarker("hotel", "住", "Villa Angelino", "left");
+      addTownMarker("secedaValley", "S", "20分 → Seceda 2518米｜17:30关", "left");
+      addTownMarker("montValley", "M", "10分 → Alpe 2000米｜18:00关｜晚光首选", "bottom");
+      addTownMarker("resciesaValley", "R", "8分 → Resciesa 2200米｜17:00关", "right", true);
+      addTownMarker("antonio", "车", "公交主站", "right");
+
+      [["hotel", "secedaValley"], ["hotel", "montValley"], ["hotel", "antonio"]].forEach(keys => {
+        const coords = keys.map(key => [places[key].lat, places[key].lng]);
+        L.polyline(coords, routeStyles.walk).addTo(activeLayer);
+      });
+      L.polyline(
+        ["hotel", "resciesaValley"].map(key => [places[key].lat, places[key].lng]),
+        { ...routeStyles.walk, color: "#9a5b24" }
+      ).addTo(activeLayer);
+
+      const coords = days[currentDay].townOverview.map(key => [places[key].lat, places[key].lng]);
+      map.fitBounds(L.latLngBounds(coords).pad(window.innerWidth < 860 ? .32 : .45), {
+        animate: true,
+        maxZoom: 17
+      });
+      document.getElementById("map-title").textContent = "O镇三座上山站";
+      document.getElementById("map-subtitle").textContent = "S 是 Seceda，M 是 Mont Sëuc，R 是 Resciesa。M 运营至18:00，最适合看傍晚暖光。";
+      activeStepId = null;
+      document.querySelectorAll(".step-card").forEach(card => card.classList.remove("is-active"));
+    }
+
+    function showCableOverview() {
+      if (!map) return;
+      setMapMode("cables");
+      activeLayer.clearLayers();
+
+      addCableMarker("secedaValley", "S", "Seceda 山脚", "left");
+      addCableMarker("furnes", "换", "Furnes 换乘", "top");
+      addCableMarker("secedaTop", "S↑", "到 Seceda 2518米，约20分钟", "right");
+      addCableMarker("montValley", "M", "Mont Sëuc 山脚", "left");
+      addCableMarker("montTop", "M↑", "到 Alpe di Siusi 约2000米，约10分钟", "right");
+      addCableMarker("sonne", "椅", "Sole 下站", "left");
+      addCableMarker("soleTop", "椅↑", "Sole 上站 2004米，约4分钟", "right");
+
+      [["secedaValley", "furnes", "secedaTop"], ["montValley", "montTop"], ["sonne", "soleTop"]].forEach(keys => {
+        const coords = keys.map(key => [places[key].lat, places[key].lng]);
+        L.polyline(coords, routeStyles.cable).addTo(activeLayer);
+      });
+
+      addCableMarker("resciesaValley", "R", "Resciesa，O镇内，约8分钟", "left", true);
+      addCableMarker("resciesaTop", "R↑", "", "left", true);
+      addCableMarker("colRaiserValley", "CR", "Col Raiser，Santa Cristina", "left", true);
+      addCableMarker("colRaiserTop", "CR↑", "", "right", true);
+      addCableMarker("ciampinoiValley", "CI", "Ciampinoi，Selva", "left", true);
+      addCableMarker("ciampinoiTop", "CI↑", "", "left", true);
+      addCableMarker("danterValley", "D", "Dantercepies，Selva", "right", true);
+      addCableMarker("danterTop", "D↑", "", "right", true);
+
+      [
+        ["resciesaValley", "resciesaTop"],
+        ["colRaiserValley", "colRaiserTop"],
+        ["ciampinoiValley", "ciampinoiTop"],
+        ["danterValley", "danterMid", "danterTop"]
+      ].forEach(keys => {
+        const coords = keys.map(key => [places[key].lat, places[key].lng]);
+        L.polyline(coords, routeStyles.optionalCable).addTo(activeLayer);
+      });
+
+      const allKeys = [
+        "secedaValley", "furnes", "secedaTop", "montValley", "montTop", "sonne", "soleTop",
+        "resciesaValley", "resciesaTop", "colRaiserValley", "colRaiserTop",
+        "ciampinoiValley", "ciampinoiTop", "danterValley", "danterMid", "danterTop"
+      ];
+      const coords = allKeys.map(key => [places[key].lat, places[key].lng]);
+      map.fitBounds(L.latLngBounds(coords).pad(window.innerWidth < 860 ? .18 : .12), {
+        animate: true,
+        maxZoom: 14
+      });
+      document.getElementById("map-title").textContent = "缆车总览";
+      document.getElementById("map-subtitle").textContent = "绿色是9月26日主计划，橙色是备选。时间为单程乘坐约时，不含排队和换乘等待。";
+      activeStepId = null;
+      document.querySelectorAll(".step-card").forEach(card => card.classList.remove("is-active"));
+    }
+
+    function showDayOverview() {
+      if (!map) return;
+      setMapMode("day");
+      const day = days[currentDay];
+      activeLayer.clearLayers();
+      const uniqueKeys = [...new Set(day.overview)];
+      uniqueKeys.forEach((key, index) => addMarker(key, index + 1));
+      const coords = uniqueKeys.map(key => [places[key].lat, places[key].lng]);
+      L.polyline(coords, { color: "#2c7455", weight: 3, opacity: .68, dashArray: "6 7" }).addTo(activeLayer);
+      map.fitBounds(L.latLngBounds(coords).pad(window.innerWidth < 860 ? .2 : .12), { maxZoom: 14 });
+      document.getElementById("map-title").textContent = `9/${currentDay} 当天转场`;
+      document.getElementById("map-subtitle").textContent = "这是长距离总览。点 O镇三站即可回到酒店和三座镇内上山站。";
+      activeStepId = null;
+      document.querySelectorAll(".step-card").forEach(card => card.classList.remove("is-active"));
+    }
+
+    function renderDay(dayKey) {
+      currentDay = dayKey;
+      const day = days[dayKey];
+      document.getElementById("day-title").textContent = day.title;
+      document.getElementById("day-summary").textContent = day.summary;
+      document.querySelectorAll("[data-day-button]").forEach(btn => {
+        btn.setAttribute("aria-selected", btn.dataset.dayButton === dayKey ? "true" : "false");
+      });
+      const decision = document.getElementById("decision-box");
+      decision.hidden = dayKey !== "26";
+      document.getElementById("transfer-board").hidden = dayKey !== "26";
+      if (dayKey === "26") updateDecision(localStorage.getItem("seceda-strategy") || "weather");
+
+      const timeline = document.getElementById("timeline");
+      timeline.innerHTML = day.steps.map((step, index) => {
+        const done = storedDone.has(step.id);
+        return `
+          <article class="step-card${done ? " is-done" : ""}" data-step-id="${step.id}" tabindex="0" role="button" aria-expanded="false">
+            <div class="step-index">${String(index + 1).padStart(2, "0")}</div>
+            <div>
+              <div class="step-time">${step.time}<span class="state-label ${step.stateClass}">${step.state}</span></div>
+              <h3 class="step-title">${step.title}</h3>
+              <p class="step-summary">${step.summary}</p>
+            </div>
+            <div class="step-details">
+              <dl class="facts">
+                <dt>交通</dt><dd>${step.transport}</dd>
+                <dt>票种</dt><dd>${step.ticket}</dd>
+                <dt>认字</dt><dd>${step.identify}</dd>
+                <dt>预约</dt><dd>${step.reserve}</dd>
+              </dl>
+              <p class="backup"><strong>备用：</strong>${step.backup}</p>
+              <div class="actions">
+                <a class="action primary" href="${step.maps}" target="_blank" rel="noreferrer" data-action-link>Google 地图</a>
+                <button type="button" class="action" data-copy="${escapeAttribute(step.copy)}">复制站名</button>
+                <button type="button" class="action" data-done="${step.id}">${done ? "取消完成" : "标记完成"}</button>
+              </div>
+            </div>
+          </article>`;
+      }).join("");
+
+      timeline.querySelectorAll(".step-card").forEach(card => {
+        card.addEventListener("click", event => {
+          if (event.target.closest("a, button")) return;
+          activateStep(card.dataset.stepId);
+        });
+        card.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activateStep(card.dataset.stepId);
+          }
+        });
+      });
+
+      timeline.querySelectorAll("[data-copy]").forEach(button => {
+        button.addEventListener("click", async () => {
+          const copied = await copyText(button.dataset.copy);
+          showToast(copied ? "站名已复制" : "复制失败，请长按文字复制");
+        });
+      });
+
+      timeline.querySelectorAll("[data-done]").forEach(button => {
+        button.addEventListener("click", () => toggleDone(button.dataset.done));
+      });
+
+      updateProgress();
+      showTownOverview();
+    }
+
+    function escapeAttribute(value) {
+      return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+    }
+
+    function activateStep(stepId) {
+      const step = days[currentDay].steps.find(item => item.id === stepId);
+      if (!step) return;
+      activeStepId = stepId;
+      document.querySelectorAll(".step-card").forEach(card => {
+        const active = card.dataset.stepId === stepId;
+        card.classList.toggle("is-active", active);
+        card.setAttribute("aria-expanded", active ? "true" : "false");
+      });
+      drawRoute(step.points, step.type, true, step.segments);
+      if (map && step.zoom && step.points.length === 1) {
+        const p = places[step.points[0]];
+        map.setView([p.lat, p.lng], step.zoom);
+      }
+      document.getElementById("map-title").textContent = step.title;
+      document.getElementById("map-subtitle").textContent = step.summary;
+      if (window.innerWidth < 860) document.querySelector(".map-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function toggleDone(stepId) {
+      if (storedDone.has(stepId)) storedDone.delete(stepId);
+      else storedDone.add(stepId);
+      localStorage.setItem("ortisei-done", JSON.stringify([...storedDone]));
+      const card = document.querySelector(`[data-step-id="${stepId}"]`);
+      card.classList.toggle("is-done", storedDone.has(stepId));
+      card.querySelector("[data-done]").textContent = storedDone.has(stepId) ? "取消完成" : "标记完成";
+      updateProgress();
+      showToast(storedDone.has(stepId) ? "已标记完成" : "已取消完成");
+    }
+
+    function updateProgress() {
+      const steps = days[currentDay].steps;
+      const count = steps.filter(step => storedDone.has(step.id)).length;
+      document.getElementById("progress-copy").textContent = `完成 ${count} / ${steps.length}`;
+    }
+
+    function updateDecision(strategy) {
+      localStorage.setItem("seceda-strategy", strategy);
+      document.querySelectorAll("[data-strategy]").forEach(button => {
+        button.setAttribute("aria-pressed", button.dataset.strategy === strategy ? "true" : "false");
+      });
+      document.getElementById("decision-note").textContent = strategy === "slot"
+        ? "全价 €74/人，选择 9月26日 08:30-09:00。时间最确定，但票不可退改。"
+        : "08:15到柜台出示 Guest Pass 和证件，先确认是否符合35%优惠；可能需要等后续时段。";
+    }
+
+    async function copyText(value) {
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(value);
+          return true;
+        } catch {}
+      }
+      const input = document.createElement("textarea");
+      input.value = value;
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      const copied = document.execCommand("copy");
+      input.remove();
+      return copied;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1700);
+    }
+
+    document.querySelectorAll("[data-day-button]").forEach(button => {
+      button.addEventListener("click", () => renderDay(button.dataset.dayButton));
+    });
+
+    document.querySelectorAll("[data-strategy]").forEach(button => {
+      button.addEventListener("click", () => updateDecision(button.dataset.strategy));
+    });
+
+    document.getElementById("show-day").addEventListener("click", showDayOverview);
+    document.getElementById("show-town").addEventListener("click", showTownOverview);
+    document.getElementById("show-cables").addEventListener("click", showCableOverview);
+
+    document.getElementById("locate-me").addEventListener("click", () => {
+      if (!map || !navigator.geolocation) {
+        showToast("当前设备不支持定位");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(position => {
+        locationLayer.clearLayers();
+        const point = [position.coords.latitude, position.coords.longitude];
+        L.circleMarker(point, { radius: 8, color: "#2c7455", fillColor: "#2c7455", fillOpacity: .9, weight: 3 })
+          .bindPopup("你的位置")
+          .addTo(locationLayer)
+          .openPopup();
+        map.setView(point, 15);
+      }, () => showToast("未获得定位权限"), { enableHighAccuracy: true, timeout: 8000 });
+    });
+
+    window.addEventListener("load", () => {
+      const initialDay = new URLSearchParams(location.search).get("day") === "26" ? "26" : "25";
+      renderDay(initialDay);
+      initMap();
+      setTimeout(() => {
+        if (!map || !baseMapReady) document.querySelector("#map-fallback h3").textContent = "地图底图仍在载入";
+      }, 3500);
+    }, { once: true });
+  </script>
+</body>
+</html>

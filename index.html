@@ -74,6 +74,18 @@
       font-weight: 720;
       font-size: .88rem;
     }
+    .top-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+    .trip-link {
+      flex: none;
+      padding: 7px 10px;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      color: var(--accent-strong);
+      background: var(--accent-soft);
+      font-weight: 720;
+      font-size: .88rem;
+      text-decoration: none;
+    }
     .tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -269,7 +281,10 @@
         <p class="brand">30天旅行意大利语</p>
         <p class="countdown" id="countdown"></p>
       </div>
-      <div class="day-chip" id="dayChip"></div>
+      <div class="top-actions">
+        <a class="trip-link" href="travel/ortisei/">O镇地图</a>
+        <div class="day-chip" id="dayChip"></div>
+      </div>
     </header>
 
     <nav class="tabs" aria-label="主要页面">
