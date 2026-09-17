@@ -1554,7 +1554,7 @@
     function renderEmergency() {
       $("emergencyList").innerHTML = emergency.map(item => `<div class="emergency-row">
         <div><p class="italian" lang="it">${escapeHtml(item.it)}</p><p class="meaning"><span class="english">${escapeHtml(item.en)}</span>${escapeHtml(item.zh)}</p></div>
-        <button class="speak-btn" data-speak="${escapeHtml(item.it)}">播放</button>
+        <button class="speak-btn" data-recorded-speak="${escapeHtml(item.it)}">真人语音</button>
       </div>`).join("");
     }
 

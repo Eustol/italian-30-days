@@ -33,7 +33,7 @@ let source = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => source += chunk);
 process.stdin.on('end', () => {
-  const course = new Function(source + '\\nreturn { lessons, lessonToolkits };')();
+  const course = new Function(source + '\\nreturn { lessons, lessonToolkits, emergency };')();
   process.stdout.write(JSON.stringify(course));
 });
 """
@@ -62,6 +62,7 @@ def collect_speech_texts(course):
     for toolkit in course["lessonToolkits"]:
         for _group_name, items in toolkit["groups"]:
             texts.extend(item["it"] for item in items)
+    texts.extend(item["it"] for item in course["emergency"])
     by_hash = collections.defaultdict(set)
     for text in texts:
         by_hash[speech_hash(text)].add(text)
@@ -154,7 +155,7 @@ async def main(days, clips_only):
         ))
     speech_texts = collect_speech_texts(course)
     SPEECH_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"Generating {len(speech_texts)} unique core/toolkit clips")
+    print(f"Generating {len(speech_texts)} unique learning clips")
     await asyncio.gather(*(generate_speech_clip(text, semaphore) for text in speech_texts))
 
 
