@@ -316,10 +316,10 @@
         <h2>真实对话</h2>
         <div class="dialogue" id="dialogue"></div>
         <div class="lesson-actions">
-          <button class="btn small" id="playDialogue">自然播放</button>
+          <button class="btn small" id="playDialogue">播放真人级对话</button>
           <button class="btn small" id="stopDialogue">停止</button>
         </div>
-        <p class="record-status" id="dialogueStatus" aria-live="polite">逐句播放，角色之间会留出回答时间。</p>
+        <p class="record-status" id="dialogueStatus" aria-live="polite">双声线完整录音，角色之间有自然停顿。</p>
       </section>
 
       <section class="section">
@@ -1272,6 +1272,7 @@
     let mediaStream;
     let chunks = [];
     let speechRun = 0;
+    let dialogueAudio = null;
     const progress = JSON.parse(localStorage.getItem("italian30-progress") || "{}");
 
     const $ = id => document.getElementById(id);
@@ -1296,8 +1297,13 @@
     function stopSpeech() {
       speechRun++;
       if ("speechSynthesis" in window) speechSynthesis.cancel();
+      if (dialogueAudio) {
+        dialogueAudio.pause();
+        dialogueAudio.currentTime = 0;
+        dialogueAudio = null;
+      }
       document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
-      $("dialogueStatus").textContent = "已停止。再次点击“自然播放”可从头开始。";
+      $("dialogueStatus").textContent = "已停止。再次点击“播放真人级对话”可从头开始。";
     }
 
     function speakSequence(items, options = {}) {
@@ -1306,6 +1312,10 @@
         return;
       }
       speechSynthesis.cancel();
+      if (dialogueAudio) {
+        dialogueAudio.pause();
+        dialogueAudio = null;
+      }
       document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
       const run = ++speechRun;
       const voices = italianVoices();
@@ -1343,6 +1353,40 @@
 
     function speak(text, selectedRate = rate) {
       speakSequence([{ text, rate: selectedRate, voiceIndex: 0 }]);
+    }
+
+    function playSynthDialogue() {
+      speakSequence(lessons[currentDay].dialogue.map(line => ({
+        text: line[1],
+        speaker: line[0],
+        rate: rate < .7 ? .58 : .76,
+        voiceIndex: 0
+      })), { dialogue: true, pause: rate < .7 ? 1300 : 900 });
+    }
+
+    function playRecordedDialogue() {
+      stopSpeech();
+      const lessonDay = String(currentDay + 1).padStart(2, "0");
+      const audio = new Audio(`audio/dialogues/day-${lessonDay}.mp3`);
+      let fallbackStarted = false;
+      dialogueAudio = audio;
+      audio.preload = "auto";
+      audio.onplay = () => {
+        $("dialogueStatus").textContent = "正在播放双声线意大利语录音。先听一遍，再跟读一遍。";
+      };
+      audio.onended = () => {
+        dialogueAudio = null;
+        $("dialogueStatus").textContent = "播放完成。现在换你扮演“你”，再跟读一遍。";
+      };
+      const useFallback = () => {
+        if (fallbackStarted) return;
+        fallbackStarted = true;
+        dialogueAudio = null;
+        $("dialogueStatus").textContent = "录音未能加载，已切换到浏览器备用朗读。";
+        playSynthDialogue();
+      };
+      audio.onerror = useFallback;
+      audio.play().catch(useFallback);
     }
 
     function saveProgress() {
@@ -1385,6 +1429,10 @@
     function renderLesson() {
       speechRun++;
       if ("speechSynthesis" in window) speechSynthesis.cancel();
+      if (dialogueAudio) {
+        dialogueAudio.pause();
+        dialogueAudio = null;
+      }
       const lesson = lessons[currentDay];
       const toolkitCount = lessonToolkits[currentDay].groups.reduce((total, group) => total + group[1].length, 0);
       $("dayChip").textContent = `第 ${currentDay + 1} 天`;
@@ -1415,7 +1463,7 @@
         <p class="line-it" lang="it">${escapeHtml(line[1])}</p>
         <p class="line-meaning">${escapeHtml(line[2])}</p>
       </div>`).join("");
-      $("dialogueStatus").textContent = "逐句播放，角色之间会留出回答时间。";
+      $("dialogueStatus").textContent = "双声线完整录音，角色之间有自然停顿。";
       $("practice").innerHTML = lesson.phrases.slice(0, 5).map((item, index) => `<div class="practice-item">
         <div>${index + 1}. ${escapeHtml(item.zh)}</div>
         <button class="btn small reveal" data-answer="a-${index}">查看答案</button>
@@ -1507,12 +1555,7 @@
       rate,
       voiceIndex: 0
     })), { pause: rate < .7 ? 1050 : 760 }));
-    $("playDialogue").addEventListener("click", () => speakSequence(lessons[currentDay].dialogue.map((line, index) => ({
-      text: line[1],
-      speaker: line[0],
-      rate: rate < .7 ? .58 : .76,
-      voiceIndex: 0
-    })), { dialogue: true, pause: rate < .7 ? 1300 : 900 }));
+    $("playDialogue").addEventListener("click", playRecordedDialogue);
     $("stopDialogue").addEventListener("click", stopSpeech);
     $("speedBtn").addEventListener("click", () => {
       rate = rate === 0.78 ? 0.58 : 0.78;
