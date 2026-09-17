@@ -286,7 +286,7 @@
         <p class="goal" id="lessonGoal"></p>
         <div class="lesson-actions">
           <button class="btn primary" id="playLesson">播放本课</button>
-          <button class="btn" id="speedBtn">语速：正常</button>
+          <button class="btn" id="speedBtn">语速：舒缓</button>
         </div>
         <div class="lesson-media" aria-labelledby="dailyMediaTitle">
           <h2 id="dailyMediaTitle">今天配套：4 个视频入口</h2>
@@ -1267,7 +1267,7 @@
     const dayMs = 86400000;
     const calendarDay = Math.min(29, Math.max(0, Math.floor((dateNow - startDate) / dayMs)));
     let currentDay = calendarDay;
-    let rate = 0.9;
+    let rate = 0.78;
     let mediaRecorder;
     let mediaStream;
     let chunks = [];
@@ -1278,14 +1278,16 @@
     const escapeHtml = value => String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 
     function italianVoices() {
-      const preferred = ["google", "premium", "enhanced", "federica", "alice", "luca", "elsa"];
+      const preferred = ["premium", "enhanced", "natural", "federica", "alice", "elsa", "luca", "google"];
       return speechSynthesis.getVoices()
         .filter(voice => voice.lang && voice.lang.toLowerCase().startsWith("it"))
         .sort((a, b) => {
           const rank = voice => {
             const name = voice.name.toLowerCase();
             const match = preferred.findIndex(word => name.includes(word));
-            return (match < 0 ? 50 : match) + (voice.localService ? 5 : 0);
+            const localePenalty = voice.lang.toLowerCase() === "it-it" ? 0 : 4;
+            const compactPenalty = name.includes("compact") ? 12 : 0;
+            return (match < 0 ? 50 : match) + localePenalty + compactPenalty + (voice.localService ? 0 : 2);
           };
           return rank(a) - rank(b);
         });
@@ -1323,12 +1325,12 @@
         }
         const utterance = new SpeechSynthesisUtterance(item.text);
         utterance.lang = "it-IT";
-        utterance.rate = item.rate || rate;
-        utterance.pitch = 1;
+        utterance.rate = item.rate ?? rate;
+        utterance.pitch = 0.98;
         utterance.voice = voices[(item.voiceIndex || 0) % Math.max(voices.length, 1)] || null;
         utterance.onend = () => {
           index++;
-          window.setTimeout(next, options.pause || 420);
+          window.setTimeout(next, options.pause ?? 720);
         };
         utterance.onerror = () => {
           index++;
@@ -1503,18 +1505,18 @@
     $("playLesson").addEventListener("click", () => speakSequence(lessons[currentDay].phrases.map((item, index) => ({
       text: item.it,
       rate,
-      voiceIndex: index % 2
-    })), { pause: rate < .8 ? 650 : 420 }));
+      voiceIndex: 0
+    })), { pause: rate < .7 ? 1050 : 760 }));
     $("playDialogue").addEventListener("click", () => speakSequence(lessons[currentDay].dialogue.map((line, index) => ({
       text: line[1],
       speaker: line[0],
-      rate: rate < .8 ? .68 : (index % 2 ? .88 : .92),
-      voiceIndex: index % 2
-    })), { dialogue: true, pause: rate < .8 ? 900 : 560 }));
+      rate: rate < .7 ? .58 : .76,
+      voiceIndex: 0
+    })), { dialogue: true, pause: rate < .7 ? 1300 : 900 }));
     $("stopDialogue").addEventListener("click", stopSpeech);
     $("speedBtn").addEventListener("click", () => {
-      rate = rate === 0.9 ? 0.62 : 0.9;
-      $("speedBtn").textContent = rate < 0.8 ? "语速：慢速" : "语速：正常";
+      rate = rate === 0.78 ? 0.58 : 0.78;
+      $("speedBtn").textContent = rate < 0.7 ? "语速：慢速" : "语速：舒缓";
     });
     $("prevBtn").addEventListener("click", () => { if (currentDay > 0) { currentDay--; renderLesson(); } });
     $("nextBtn").addEventListener("click", () => { if (currentDay < lessons.length - 1) { currentDay++; renderLesson(); } });
