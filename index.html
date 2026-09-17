@@ -1273,6 +1273,7 @@
     let chunks = [];
     let speechRun = 0;
     let dialogueAudio = null;
+    let speechAudio = null;
     const progress = JSON.parse(localStorage.getItem("italian30-progress") || "{}");
 
     const $ = id => document.getElementById(id);
@@ -1302,6 +1303,11 @@
         dialogueAudio.currentTime = 0;
         dialogueAudio = null;
       }
+      if (speechAudio) {
+        speechAudio.pause();
+        speechAudio.currentTime = 0;
+        speechAudio = null;
+      }
       document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
       $("dialogueStatus").textContent = "已停止。再次点击“播放真人级对话”可从头开始。";
     }
@@ -1315,6 +1321,10 @@
       if (dialogueAudio) {
         dialogueAudio.pause();
         dialogueAudio = null;
+      }
+      if (speechAudio) {
+        speechAudio.pause();
+        speechAudio = null;
       }
       document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
       const run = ++speechRun;
@@ -1353,6 +1363,38 @@
 
     function speak(text, selectedRate = rate) {
       speakSequence([{ text, rate: selectedRate, voiceIndex: 0 }]);
+    }
+
+    function speechHash(text) {
+      let value = 2166136261;
+      for (const character of text) {
+        value ^= character.codePointAt(0);
+        value = Math.imul(value, 16777619);
+      }
+      return (value >>> 0).toString(16).padStart(8, "0");
+    }
+
+    function playRecordedSpeech(text) {
+      speechRun++;
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      if (dialogueAudio) {
+        dialogueAudio.pause();
+        dialogueAudio = null;
+      }
+      if (speechAudio) speechAudio.pause();
+      const audio = new Audio(`audio/speech/${speechHash(text)}.mp3`);
+      let fallbackStarted = false;
+      speechAudio = audio;
+      audio.preload = "auto";
+      audio.onended = () => { if (speechAudio === audio) speechAudio = null; };
+      const useFallback = () => {
+        if (fallbackStarted) return;
+        fallbackStarted = true;
+        if (speechAudio === audio) speechAudio = null;
+        speak(text);
+      };
+      audio.onerror = useFallback;
+      audio.play().catch(useFallback);
     }
 
     function playSynthDialogue() {
@@ -1420,7 +1462,7 @@
             <p class="toolkit-zh">${escapeHtml(item.zh)}</p>
             <p class="toolkit-read">读音：${escapeHtml(item.read)}</p>
           </div>
-          <button class="toolkit-play" data-speak="${escapeHtml(item.it)}">播放</button>
+          <button class="toolkit-play" data-recorded-speak="${escapeHtml(item.it)}">真人语音</button>
         </article>`).join("")}</div>
       </section>`).join("");
       $("toolkitPatterns").innerHTML = toolkit.patterns.map(pattern => `<div class="toolkit-pattern">${escapeHtml(pattern)}</div>`).join("");
@@ -1432,6 +1474,10 @@
       if (dialogueAudio) {
         dialogueAudio.pause();
         dialogueAudio = null;
+      }
+      if (speechAudio) {
+        speechAudio.pause();
+        speechAudio = null;
       }
       const lesson = lessons[currentDay];
       const toolkitCount = lessonToolkits[currentDay].groups.reduce((total, group) => total + group[1].length, 0);
@@ -1453,7 +1499,7 @@
             <p class="read">英语发音提示：${escapeHtml(item.read)}</p>
           </div>
           <div class="phrase-controls">
-            <button class="speak-btn" data-speak="${escapeHtml(item.it)}">播放</button>
+            <button class="speak-btn" data-recorded-speak="${escapeHtml(item.it)}">真人语音</button>
             <button class="know-btn ${known ? "known" : ""}" data-know="${key}">${known ? "已会" : "标记"}</button>
           </div>
         </article>`;
@@ -1521,6 +1567,8 @@
     }
 
     document.addEventListener("click", event => {
+      const recordedSpeakButton = event.target.closest("[data-recorded-speak]");
+      if (recordedSpeakButton) playRecordedSpeech(recordedSpeakButton.dataset.recordedSpeak);
       const speakButton = event.target.closest("[data-speak]");
       if (speakButton) speak(speakButton.dataset.speak);
       const knowButton = event.target.closest("[data-know]");
