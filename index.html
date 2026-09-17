@@ -331,10 +331,10 @@
         <h2>真实对话</h2>
         <div class="dialogue" id="dialogue"></div>
         <div class="lesson-actions">
-          <button class="btn small" id="playDialogue">播放真人级对话</button>
+          <button class="btn small" id="playDialogue">播放完整对话</button>
           <button class="btn small" id="stopDialogue">停止</button>
         </div>
-        <p class="record-status" id="dialogueStatus" aria-live="polite">双声线完整录音，角色之间有自然停顿。</p>
+        <p class="record-status" id="dialogueStatus" aria-live="polite">双声线完整录音，会从第一句连续播放到最后一句。</p>
       </section>
 
       <section class="section">
@@ -1293,6 +1293,7 @@
 
     const $ = id => document.getElementById(id);
     const escapeHtml = value => String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+    const audioVersion = "20260918-2";
 
     function italianVoices() {
       const preferred = ["premium", "enhanced", "natural", "federica", "alice", "elsa", "luca", "google"];
@@ -1324,7 +1325,7 @@
         speechAudio = null;
       }
       document.querySelectorAll(".line.speaking").forEach(line => line.classList.remove("speaking"));
-      $("dialogueStatus").textContent = "已停止。再次点击“播放真人级对话”可从头开始。";
+      $("dialogueStatus").textContent = "已停止。再次点击“播放完整对话”可从头开始。";
     }
 
     function speakSequence(items, options = {}) {
@@ -1397,7 +1398,7 @@
         dialogueAudio = null;
       }
       if (speechAudio) speechAudio.pause();
-      const audio = new Audio(`audio/speech/${speechHash(text)}.mp3`);
+      const audio = new Audio(`audio/speech/${speechHash(text)}.mp3?v=${audioVersion}`);
       let fallbackStarted = false;
       speechAudio = audio;
       audio.preload = "auto";
@@ -1424,7 +1425,7 @@
     function playRecordedDialogue() {
       stopSpeech();
       const lessonDay = String(currentDay + 1).padStart(2, "0");
-      const audio = new Audio(`audio/dialogues/day-${lessonDay}.mp3`);
+      const audio = new Audio(`audio/dialogues/day-${lessonDay}.mp3?v=${audioVersion}`);
       let fallbackStarted = false;
       dialogueAudio = audio;
       audio.preload = "auto";
@@ -1524,7 +1525,7 @@
         <p class="line-it" lang="it">${escapeHtml(line[1])}</p>
         <p class="line-meaning">${escapeHtml(line[2])}</p>
       </div>`).join("");
-      $("dialogueStatus").textContent = "双声线完整录音，角色之间有自然停顿。";
+      $("dialogueStatus").textContent = "双声线完整录音，会从第一句连续播放到最后一句。";
       $("practice").innerHTML = lesson.phrases.slice(0, 5).map((item, index) => `<div class="practice-item">
         <div>${index + 1}. ${escapeHtml(item.zh)}</div>
         <button class="btn small reveal" data-answer="a-${index}">查看答案</button>

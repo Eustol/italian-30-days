@@ -11,6 +11,7 @@ import tempfile
 from pathlib import Path
 
 import edge_tts
+import imageio_ffmpeg
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,6 +90,30 @@ async def synthesize_line(text, voice, rate, output_path):
     raise last_error
 
 
+def merge_dialogue_chunks(chunks, output_path, temp_dir):
+    concat_path = Path(temp_dir) / "concat.txt"
+    concat_path.write_text(
+        "\n".join(f"file '{chunk.as_posix()}'" for chunk in chunks),
+        encoding="utf-8",
+    )
+    subprocess.run(
+        [
+            imageio_ffmpeg.get_ffmpeg_exe(),
+            "-hide_banner",
+            "-loglevel", "error",
+            "-y",
+            "-f", "concat",
+            "-safe", "0",
+            "-i", str(concat_path),
+            "-ac", "1",
+            "-ar", "24000",
+            "-b:a", "64k",
+            str(output_path),
+        ],
+        check=True,
+    )
+
+
 async def generate_day(day_number, lesson, semaphore):
     output_path = DIALOGUE_OUTPUT_DIR / f"day-{day_number:02d}.mp3"
     async with semaphore:
@@ -99,8 +124,8 @@ async def generate_day(day_number, lesson, semaphore):
                 rate = "-18%" if voice == LEARNER_VOICE else "-12%"
                 chunk = Path(temp_dir) / f"line-{line_number:02d}.mp3"
                 await synthesize_line(italian, voice, rate, chunk)
-                chunks.append(chunk.read_bytes())
-            output_path.write_bytes(b"".join(chunks))
+                chunks.append(chunk)
+            merge_dialogue_chunks(chunks, output_path, temp_dir)
             print(f"day {day_number:02d}: {lesson['title']} -> {output_path.name}")
 
 
