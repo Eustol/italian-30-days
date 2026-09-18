@@ -80,6 +80,23 @@
 
     .brand { min-width: 0; }
 
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      margin-bottom: 7px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--accent);
+      background: var(--surface-2);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .back-link:active { transform: translateY(1px); }
+
     .brand h1 {
       margin: 0;
       font-size: clamp(20px, 2.4vw, 30px);
@@ -640,6 +657,7 @@
 <body>
   <header class="app-header">
     <div class="brand">
+      <a class="back-link" href="../../">← 返回语言学习</a>
       <h1>O镇行动地图</h1>
       <p>Ortisei / St. Ulrich / Urtijëi，9月25日和26日</p>
     </div>
